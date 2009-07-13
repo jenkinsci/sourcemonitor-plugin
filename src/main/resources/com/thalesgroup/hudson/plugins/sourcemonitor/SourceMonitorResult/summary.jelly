@@ -1,0 +1,121 @@
+<!--
+/*******************************************************************************
+* Copyright (c) 2009 Thales Corporate Services SAS                             *
+* Author : Gregory Boissinot                                                   *
+*                                                                              *
+* Permission is hereby granted, free of charge, to any person obtaining a copy *
+* of this software and associated documentation files (the "Software"), to deal*
+* in the Software without restriction, including without limitation the rights *
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell    *
+* copies of the Software, and to permit persons to whom the Software is        *
+* furnished to do so, subject to the following conditions:                     *
+*                                                                              *
+* The above copyright notice and this permission notice shall be included in   *
+* all copies or substantial portions of the Software.                          *
+*                                                                              *
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR   *
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     *
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  *
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER       *
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,*
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
+* THE SOFTWARE.                                                                *
+*******************************************************************************/
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt"  xmlns:local="local">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <table class="pane sortable" id="files">
+    <tr>
+      <td class="pane-header">ID</td>
+      <td class="pane-header">Metric</td>
+      <td class="pane-header">Value</td>
+    </tr>
+    
+
+        <j:forEach var="elt" items="${it.report.checkpoints}">    
+           <tbody>
+	        <tr>
+	         <td class="pane">M0</td>
+	         <td class="pane">Lines</td>
+	         <td class="pane">${elt["M0"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M1</td>
+	         <td class="pane">Statements</td>
+	         <td class="pane">${elt["M1"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M2</td>
+	         <td class="pane">Percent Branch Statements</td>
+	         <td class="pane">${elt["M2"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M3</td>
+	         <td class="pane">Method Call Statements</td>
+	         <td class="pane">${elt["M3"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M4</td>
+	         <td class="pane">Percent Lines with Comments</td>
+	         <td class="pane">${elt["M4"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M5</td>
+	         <td class="pane">Classes and Interfaces</td>
+	         <td class="pane">${elt["M5"]}</td>	   	          
+	        </tr>	        	        
+
+	        <tr>
+	         <td class="pane">M6</td>
+	         <td class="pane">Methods per Class</td>
+	         <td class="pane">${elt["M6"]}</td>	   	          
+	        </tr>	
+	        <tr>
+	         <td class="pane">M7</td>
+	         <td class="pane">Average Statements per Method</td>
+	         <td class="pane">${elt["M7"]}</td>	   	          
+	        </tr>	
+	        <tr>
+	         <td class="pane">M8</td>
+	         <td class="pane">Line Number of Most Complex Method</td>
+	         <td class="pane">${elt["M8"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M9</td>
+	         <td class="pane">Name of Most Complex Method</td>
+	         <td class="pane">${elt["M9"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M10</td>
+	         <td class="pane">Maximum Complexity</td>
+	         <td class="pane">${elt["M10"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M11</td>
+	         <td class="pane">Line Number of Deepest Block</td>
+	         <td class="pane">${elt["M11"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M12</td>
+	         <td class="pane">Maximum Block Depth</td>
+	         <td class="pane">${elt["M12"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M13</td>
+	         <td class="pane">Average Block Depth</td>
+	         <td class="pane">${elt["M13"]}</td>	   	          
+	        </tr>
+	        <tr>
+	         <td class="pane">M14</td>
+	         <td class="pane">Average Complexity</td>
+	         <td class="pane">${elt["M14"]}</td>	   	          
+	        </tr>
+	      <tbody>    
+		</j:forEach>
+
+    
+ 
+  </table>
+</j:jelly>

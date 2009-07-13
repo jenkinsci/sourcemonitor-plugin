@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sourcemonitor_metrics>
+  <project version="2.4">
+    <project_name>Java Test Files</project_name>
+    <project_directory>C:\My Project Source Code</project_directory>
+    <project_language>Java</project_language>
+    <ignore_headers_footers>false</ignore_headers_footers>
+    <metric_names name_count="14">
+      <metric_name id="M0" type="number">Lines</metric_name>
+      <metric_name id="M1" type="number">Statements</metric_name>
+      <metric_name id="M2" type="percent" divisor="M1">Percent Branch Statements</metric_name>
+      <metric_name id="M3" type="number">Method Call Statements</metric_name>
+      <metric_name id="M4" type="percent" divisor="M0">Percent Lines with Comments</metric_name>
+      <metric_name id="M5" type="number">Classes and Interfaces</metric_name>
+      <metric_name id="M6" type="ratio" divisor="M5">Methods per Class</metric_name>
+      <metric_name id="M7" type="ratio" divisor="M6">Average Statements per Method</metric_name>
+      <metric_name id="M8" type="string">Line Number of Most Complex Method</metric_name>
+      <metric_name id="M9" type="string">Name of Most Complex Method</metric_name>
+      <metric_name id="M10" type="maximum">Maximum Complexity</metric_name>
+      <metric_name id="M11" type="string">Line Number of Deepest Block</metric_name>
+      <metric_name id="M12" type="maximum">Maximum Block Depth</metric_name>
+      <metric_name id="M13" type="average" values="block_depth">Average Block Depth</metric_name>
+    </metric_names>
+    <checkpoints checkpoint_count="1">
+      <checkpoint checkpoint_name="Checkpoint5" checkpoint_date="2004-08-16">
+        <files file_count="100">
+          <file file_name="MyJavaFile.java">
+            <metrics metric_count="14">
+              <metric id="M0">44</metric>
+              <metric id="M1">6</metric>
+              <metric id="M2">0.0</metric>
+              <metric id="M3">2</metric>
+              <metric id="M4">70.5</metric>
+              <metric id="M5">1</metric>
+              <metric id="M6">2.00</metric>
+              <metric id="M7">2.00</metric>
+              <metric id="M8">32</metric>
+              <metric id="M9">MyClass.ComplexMethod()</metric>
+              <metric id="M10">1</metric>
+              <metric id="M11">33</metric>
+              <metric id="M12">2</metric>
+              <metric id="M13">1.00</metric>
+            </metrics>
+            <method_metrics method_count="3">
+              <method name="Frame.AssertValid()" line="34">
+                <complexity>1</complexity>
+                <statements>1</statements>
+                <maximum_depth>1</maximum_depth>
+                <calls>0</calls>
+              </method>
+              <method name="Frame.Frame()" line="47">
+                <complexity>4</complexity>
+                <statements>16</statements>
+                <maximum_depth>3</maximum_depth>
+                <calls>0</calls>
+              </method>
+              <method name="Frame.Dump()" line="63">
+                <complexity>2</complexity>
+                <statements>5</statements>
+                <maximum_depth>4</maximum_depth>
+                <calls>0</calls>
+              </method>
+            </method_metrics>
+            <block_depths depth_count="10">
+              <block_depth level="0">2</block_depth>
+              <block_depth level="1">4</block_depth>
+              <block_depth level="2">2</block_depth>
+              <block_depth level="3">0</block_depth>
+              <block_depth level="4">0</block_depth>
+              <block_depth level="5">0</block_depth>
+              <block_depth level="6">0</block_depth>
+              <block_depth level="7">0</block_depth>
+              <block_depth level="8">0</block_depth>
+              <block_depth level="9+">0</block_depth>
+            </block_depths>
+          </file>
+          <!-- ************************* -->
+          <!-- other 99 files go here... -->
+          <!-- ************************* -->
+        </files>
+      </checkpoint>
+    </checkpoints>
+  </project>
+</sourcemonitor_metrics>
