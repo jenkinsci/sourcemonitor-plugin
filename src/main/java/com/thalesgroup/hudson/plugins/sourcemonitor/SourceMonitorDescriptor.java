@@ -25,14 +25,15 @@
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 
+import hudson.Extension;
 import hudson.matrix.MatrixProject;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 
-
-public class SourceMonitorDescriptor extends Descriptor<Publisher> {
+@Extension
+public class SourceMonitorDescriptor extends BuildStepDescriptor<Publisher> {
 
     public SourceMonitorDescriptor(){
         super(SourcemonitorPublisher.class);

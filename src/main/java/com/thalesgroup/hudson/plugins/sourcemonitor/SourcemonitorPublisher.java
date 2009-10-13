@@ -29,9 +29,9 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
-import hudson.tasks.Publisher;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Recorder;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -40,17 +40,11 @@ import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 
-public class SourcemonitorPublisher extends Publisher implements Serializable{
+public class SourcemonitorPublisher extends Recorder implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-
-	public static final SourceMonitorDescriptor DESCRIPTOR = new SourceMonitorDescriptor();
+    private static final long serialVersionUID = 1L;
 
     private final String summaryFilePath;
-    
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
     
     @DataBoundConstructor
     public SourcemonitorPublisher(String summaryFilePath){
@@ -60,6 +54,10 @@ public class SourcemonitorPublisher extends Publisher implements Serializable{
     @Override
     public Action getProjectAction(AbstractProject<?,?> project){
         return new SourceMonitorProjectAction(project);
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     protected boolean canContinue(final Result result) {
@@ -73,9 +71,9 @@ public class SourcemonitorPublisher extends Publisher implements Serializable{
             
         	listener.getLogger().println("Parsing sourcemonitor results");
         	
-        	FilePath workspace = build.getProject().getWorkspace();
+        	FilePath workspace = build.getWorkspace();
             PrintStream logger = listener.getLogger();
-            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(build.getParent().getWorkspace(), summaryFilePath));
+            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(build.getWorkspace(), summaryFilePath));
             
             SourceMonitorReport report;
             try{
