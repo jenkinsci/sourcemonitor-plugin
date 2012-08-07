@@ -36,7 +36,7 @@ import hudson.tasks.Publisher;
 public class SourceMonitorDescriptor extends BuildStepDescriptor<Publisher> {
 
     public SourceMonitorDescriptor(){
-        super(SourcemonitorPublisher.class);
+        super(SourceMonitorPublisher.class);
     }
 
     public boolean isApplicable(Class<? extends AbstractProject> jobType) {
