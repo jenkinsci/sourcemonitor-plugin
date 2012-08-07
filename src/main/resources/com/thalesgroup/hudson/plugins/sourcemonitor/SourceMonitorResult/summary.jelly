@@ -112,7 +112,7 @@
 	         <td class="pane">Average Complexity</td>
 	         <td class="pane">${elt["M14"]}</td>	   	          
 	        </tr>
-	      <tbody>    
+	      </tbody>    
 		</j:forEach>
 
     

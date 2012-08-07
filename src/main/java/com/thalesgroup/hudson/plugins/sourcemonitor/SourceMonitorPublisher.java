@@ -40,14 +40,14 @@ import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 
-public class SourcemonitorPublisher extends Recorder implements Serializable{
+public class SourceMonitorPublisher extends Recorder implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
     private final String summaryFilePath;
     
     @DataBoundConstructor
-    public SourcemonitorPublisher(String summaryFilePath){
+    public SourceMonitorPublisher(String summaryFilePath){
         this.summaryFilePath = summaryFilePath;
     }
 
