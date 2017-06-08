@@ -53,64 +53,54 @@
 	        </tr>
 	        <tr>
 	         <td class="pane">M3</td>
-	         <td class="pane">Method Call Statements</td>
+	         <td class="pane">Percent Lines with Comments</td>
 	         <td class="pane">${elt["M3"]}</td>	   	          
 	        </tr>
 	        <tr>
 	         <td class="pane">M4</td>
-	         <td class="pane">Percent Lines with Comments</td>
+	         <td class="pane">Functions</td>
 	         <td class="pane">${elt["M4"]}</td>	   	          
 	        </tr>
 	        <tr>
 	         <td class="pane">M5</td>
-	         <td class="pane">Classes and Interfaces</td>
+	         <td class="pane">Average Statements per Function</td>
 	         <td class="pane">${elt["M5"]}</td>	   	          
 	        </tr>	        	        
 
 	        <tr>
 	         <td class="pane">M6</td>
-	         <td class="pane">Methods per Class</td>
+	         <td class="pane">Line Number of Most Complex Function</td>
 	         <td class="pane">${elt["M6"]}</td>	   	          
 	        </tr>	
 	        <tr>
 	         <td class="pane">M7</td>
-	         <td class="pane">Average Statements per Method</td>
+	         <td class="pane">Name of Most Complex Function</td>
 	         <td class="pane">${elt["M7"]}</td>	   	          
 	        </tr>	
 	        <tr>
 	         <td class="pane">M8</td>
-	         <td class="pane">Line Number of Most Complex Method</td>
+	         <td class="pane">Complexity of Most Complex Function</td>
 	         <td class="pane">${elt["M8"]}</td>	   	          
 	        </tr>
 	        <tr>
 	         <td class="pane">M9</td>
-	         <td class="pane">Name of Most Complex Method</td>
+	         <td class="pane">Line Number of Deepest Block</td>
 	         <td class="pane">${elt["M9"]}</td>	   	          
 	        </tr>
 	        <tr>
 	         <td class="pane">M10</td>
-	         <td class="pane">Maximum Complexity</td>
+	         <td class="pane">Maximum Block Depth</td>
 	         <td class="pane">${elt["M10"]}</td>	   	          
 	        </tr>
 	        <tr>
 	         <td class="pane">M11</td>
-	         <td class="pane">Line Number of Deepest Block</td>
+	         <td class="pane">Average Block Depth</td>
 	         <td class="pane">${elt["M11"]}</td>	   	          
 	        </tr>
 	        <tr>
 	         <td class="pane">M12</td>
-	         <td class="pane">Maximum Block Depth</td>
-	         <td class="pane">${elt["M12"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M13</td>
-	         <td class="pane">Average Block Depth</td>
-	         <td class="pane">${elt["M13"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M14</td>
 	         <td class="pane">Average Complexity</td>
-	         <td class="pane">${elt["M14"]}</td>	   	          
+	         <td class="pane">${elt["M12"]}</td>	   	          
 	        </tr>
 	      </tbody>    
 		</j:forEach>
