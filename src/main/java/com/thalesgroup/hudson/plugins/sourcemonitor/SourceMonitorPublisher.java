@@ -65,7 +65,7 @@ public class SourceMonitorPublisher extends Recorder implements Serializable{
     }
 
     @Override
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener){
+	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, final TaskListener listener){
     	
         if(this.canContinue(build.getResult())){
             
