@@ -15,9 +15,9 @@
     <url>http://wiki.jenkins-ci.org/display/JENKINS/SourceMonitor+Plugin</url>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/sourcemonitor-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/sourcemonitor-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/sourcemonitor-plugin</url>
+        <connection>scm:git:git://github.com/PriceElectronics/sourcemonitor-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:PriceElectronics/sourcemonitor-plugin.git</developerConnection>
+        <url>https://github.com/PriceElectronics/sourcemonitor-plugin</url>
     </scm>
 
     <dependencies>
