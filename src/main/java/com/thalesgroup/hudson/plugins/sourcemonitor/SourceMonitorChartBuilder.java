@@ -95,7 +95,10 @@ public class SourceMonitorChartBuilder {
                 if (report.getCheckpoints().get(0).get("M0") ==null)
                 	builder.add(0, "Number of Lines", buildLabel);
                 else
+				{
                 	builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
+					builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M1")), "Percent Lines with comments", buildLabel);
+				}
             }
             action = action.getPreviousAction();
         }while(action != null);
