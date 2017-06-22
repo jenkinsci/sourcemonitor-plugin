@@ -44,8 +44,6 @@ public class SourceMonitorRenderer extends StackedAreaRenderer2 {
      *
      * @param url
      *            base URL of the graph links
-     * @param toolTipProvider
-     *            tooltip provider for the clickable map
      */
     public SourceMonitorRenderer(final String url) {
         super();

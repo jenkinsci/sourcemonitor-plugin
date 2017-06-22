@@ -25,11 +25,7 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
 
@@ -37,10 +33,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 
+import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import javax.annotation.Nonnull;
 
-public class SourceMonitorPublisher extends Recorder implements Serializable{
+
+public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep{
 
     private static final long serialVersionUID = 1L;
 
@@ -64,45 +63,35 @@ public class SourceMonitorPublisher extends Recorder implements Serializable{
         return result != Result.ABORTED && result != Result.FAILURE;
     }
 
-    @Override
-	public void perform(Run<?, ?> build, FilePath workspace, Launcher launcher, final TaskListener listener){
-    	
-        if(this.canContinue(build.getResult())){
-            
-        	listener.getLogger().println("Parsing sourcemonitor results");
-        	
-        	FilePath workspace = build.getWorkspace();
-            PrintStream logger = listener.getLogger();
-            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(build.getWorkspace(), summaryFilePath));
-            
-            SourceMonitorReport report;
-            try{
-                report = workspace.act(parser);
-            
-            }catch(IOException ioe){
-                ioe.printStackTrace(logger);
-                build.setResult(Result.FAILURE);
-                return false;
-            
-            }catch(InterruptedException ie){
-                ie.printStackTrace(logger);
-                build.setResult(Result.FAILURE);
-                return false;
-            }
-
-            SourceMonitorResult result = new SourceMonitorResult(report, build);
-            SourceMonitorBuildAction buildAction = new SourceMonitorBuildAction(build, result);
-            build.addAction(buildAction);
-            
-            listener.getLogger().println("End Processing sourcemonitor results");
-        }
-        return true;
-    }
-
 	public String getSummaryFilePath() {
 		return summaryFilePath;
 	}
 
 
-    
+    @Override
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        if(this.canContinue(run.getResult())){
+
+            listener.getLogger().println("Parsing sourcemonitor results");
+
+            PrintStream logger = listener.getLogger();
+            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath));
+
+            SourceMonitorReport report;
+            try{
+                report = filePath.act(parser);
+            }catch(IOException | InterruptedException ioe){
+                ioe.printStackTrace(logger);
+                run.setResult(Result.FAILURE);
+                return;
+            }
+
+            SourceMonitorResult result = new SourceMonitorResult(report, run);
+            SourceMonitorBuildAction buildAction = new SourceMonitorBuildAction(run, result);
+            run.addAction(buildAction);
+
+            listener.getLogger().println("End Processing sourcemonitor results");
+        }
+        return;
+    }
 }

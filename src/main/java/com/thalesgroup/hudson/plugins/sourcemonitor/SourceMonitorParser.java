@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.jenkinsci.remoting.RoleChecker;
 
 public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorReport> {
 
@@ -101,4 +102,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 		this.resultFilePath = resultFilePath;
 	}
 
+	@Override
+	public void checkRoles(RoleChecker checker) throws SecurityException {
+	}
 }

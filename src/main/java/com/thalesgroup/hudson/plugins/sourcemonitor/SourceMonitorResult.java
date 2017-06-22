@@ -25,6 +25,7 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
+import hudson.model.Run;
 
 import java.io.Serializable;
 
@@ -34,9 +35,9 @@ public class SourceMonitorResult implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private SourceMonitorReport report;
-    private AbstractBuild owner;
+    private Run owner;
 
-    public SourceMonitorResult(SourceMonitorReport report, AbstractBuild<?,?> owner){
+    public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
         this.owner = owner;
     }
@@ -45,7 +46,7 @@ public class SourceMonitorResult implements Serializable {
         return report;
     }
 
-    public AbstractBuild<?,?> getOwner(){
+    public Run<?, ?> getOwner(){
         return owner;
     }
 
@@ -55,7 +56,7 @@ public class SourceMonitorResult implements Serializable {
 
         private String displayName = null;
         
-        public BreadCrumbResult(SourceMonitorReport report, AbstractBuild<?,?> owner, String displayName){
+        public BreadCrumbResult(SourceMonitorReport report, Run<?, ?> owner, String displayName){
             super(report, owner);
             this.displayName = displayName;
         }

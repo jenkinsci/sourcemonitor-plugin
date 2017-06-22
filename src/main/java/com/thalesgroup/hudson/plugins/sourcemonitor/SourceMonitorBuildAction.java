@@ -26,6 +26,8 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import java.io.Serializable;
+
+import hudson.model.Run;
 import org.kohsuke.stapler.StaplerProxy;
 
 
@@ -33,10 +35,10 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
 
     public static final String URL_NAME = "sourcemonitor";
 
-    private AbstractBuild<?,?> build;
+    private Run<?, ?> build;
     private SourceMonitorResult result;
 
-    public SourceMonitorBuildAction(AbstractBuild<?,?> build, SourceMonitorResult result){
+    public SourceMonitorBuildAction(Run<?, ?> build, SourceMonitorResult result){
         this.build = build;
         this.result = result;
     }
@@ -85,14 +87,14 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
     }
 
     SourceMonitorBuildAction getPreviousAction(){
-        AbstractBuild<?,?> previousBuild = this.build.getPreviousBuild();
+        Run<?, ?> previousBuild = this.build.getPreviousBuild();
         if(previousBuild != null){
             return previousBuild.getAction(SourceMonitorBuildAction.class);
         }
         return null;
     }
 
-    AbstractBuild<?,?> getBuild(){
+    Run<?, ?> getBuild(){
         return this.build;
     }
 

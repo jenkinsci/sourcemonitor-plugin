@@ -24,11 +24,14 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import hudson.model.AbstractBuild;
+import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
 import hudson.util.ShiftedCategoryAxis;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
 import java.awt.Color;
+import java.lang.reflect.InvocationTargetException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -91,14 +94,37 @@ public class SourceMonitorChartBuilder {
             SourceMonitorResult result = action.getResult();
             if(result != null){
                 SourceMonitorReport report = result.getReport();
+                java.lang.reflect.Constructor<NumberOnlyBuildLabel> c;
+
                 NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(action.getBuild());
                 if (report.getCheckpoints().get(0).get("M0") ==null)
-                	builder.add(0, "Number of Lines", buildLabel);
+                    builder.add(0, "Number of Lines", buildLabel);
                 else
-				{
-                	builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
-					builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M1")), "Percent Lines with comments", buildLabel);
-				}
+                {
+                    builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
+                    builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M1")), "Percent Lines with comments", buildLabel);
+                }
+
+//                try {
+//                    //c = NumberOnlyBuildLabel.class.getDeclaredConstructor(AbstractBuild.class);
+//                    //NumberOnlyBuildLabel buildLabel = c.newInstance(action.getBuild());
+//                    NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(action.getBuild());
+//                    if (report.getCheckpoints().get(0).get("M0") ==null)
+//                        builder.add(0, "Number of Lines", buildLabel);
+//                    else
+//                    {
+//                        builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
+//                        builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M1")), "Percent Lines with comments", buildLabel);
+//                    }
+//                } catch (NoSuchMethodException e) {
+//                    e.printStackTrace();
+//                } catch (IllegalAccessException e) {
+//                    e.printStackTrace();
+//                } catch (InstantiationException e) {
+//                    e.printStackTrace();
+//                } catch (InvocationTargetException e) {
+//                    e.printStackTrace();
+//                }
             }
             action = action.getPreviousAction();
         }while(action != null);
