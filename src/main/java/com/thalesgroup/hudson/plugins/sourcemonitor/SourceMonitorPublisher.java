@@ -50,11 +50,6 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
         this.summaryFilePath = summaryFilePath;
     }
 
-    @Override
-    public Action getProjectAction(AbstractProject<?,?> project){
-        return new SourceMonitorProjectAction(project);
-    }
-
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.BUILD;
     }

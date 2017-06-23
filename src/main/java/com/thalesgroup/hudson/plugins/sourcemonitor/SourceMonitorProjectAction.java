@@ -23,9 +23,7 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
+import hudson.model.*;
 import hudson.util.ChartUtil;
 import java.io.IOException;
 import java.io.Serializable;
@@ -40,9 +38,9 @@ public class SourceMonitorProjectAction implements Action, Serializable {
     public static final int CHART_WIDTH = 500;
     public static final int CHART_HEIGHT = 200;
 
-    public AbstractProject<?,?> project;
+    public Job<?,?> project;
 
-    public SourceMonitorProjectAction(final AbstractProject<?, ?> project) {
+    public SourceMonitorProjectAction(final Job<?, ?> project) {
         this.project = project;
     }
 
@@ -70,7 +68,7 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      *             in case of an error
      */
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?, ?> build = getLastFinishedBuild();
+        Run<?, ?> build = getLastFinishedBuild();
         if (build != null) {
             response.sendRedirect2(String.format("../%d/%s", build.getNumber(), SourceMonitorBuildAction.URL_NAME));
         }
@@ -82,8 +80,8 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      * @return the last finished build or <code>null</code> if there is no
      *         such build
      */
-    public AbstractBuild<?, ?> getLastFinishedBuild() {
-        AbstractBuild<?, ?> lastBuild = project.getLastBuild();
+    public Run<?, ?> getLastFinishedBuild() {
+        Run<?, ?> lastBuild = project.getLastBuild();
         while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(SourceMonitorBuildAction.class) == null)) {
             lastBuild = lastBuild.getPreviousBuild();
         }
@@ -91,7 +89,7 @@ public class SourceMonitorProjectAction implements Action, Serializable {
     }
 
     public final boolean hasValidResults() {
-        AbstractBuild<?, ?> build = getLastFinishedBuild();
+        Run<?, ?> build = getLastFinishedBuild();
         if (build != null) {
             SourceMonitorBuildAction resultAction = build.getAction(SourceMonitorBuildAction.class);
             if (resultAction != null) {
@@ -112,7 +110,7 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      *             in case of an error
      */
     public void doTrendMap(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?,?> lastBuild = this.getLastFinishedBuild();
+        Run<?,?> lastBuild = this.getLastFinishedBuild();
         SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
 
         ChartUtil.generateClickableMap(
@@ -134,7 +132,7 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      *             in case of an error in ResultAction#doGraph(StaplerRequest, StaplerResponse, int)
      */
     public void doTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?,?> lastBuild = this.getLastFinishedBuild();
+        Run<?,?> lastBuild = this.getLastFinishedBuild();
         SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
 
         ChartUtil.generateGraph(

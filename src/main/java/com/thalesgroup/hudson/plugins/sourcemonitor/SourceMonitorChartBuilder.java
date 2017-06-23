@@ -54,7 +54,7 @@ public class SourceMonitorChartBuilder {
     }
 
     public static JFreeChart buildChart(SourceMonitorBuildAction action){
-        JFreeChart chart = ChartFactory.createStackedAreaChart(null, null, "Number of errors", buildDataset(action), PlotOrientation.VERTICAL, true, false, true);
+        JFreeChart chart = ChartFactory.createStackedAreaChart(null, null, "See Legend", buildDataset(action), PlotOrientation.VERTICAL, true, false, true);
 
         chart.setBackgroundPaint(Color.white);
 
@@ -101,37 +101,14 @@ public class SourceMonitorChartBuilder {
                     builder.add(0, "Number of Lines", buildLabel);
                 else
                 {
-                    builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
-                    builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M1")), "Percent Lines with comments", buildLabel);
+                    builder.add(Double.parseDouble(report.getCheckpoints().get(0).get("M3")), "Percent Lines with comments", buildLabel);
+                    builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M8")), "Complexity of Most Complex Function", buildLabel);
+                    builder.add(Double.parseDouble(report.getCheckpoints().get(0).get("M12")), "Average Complexity", buildLabel);
                 }
-
-//                try {
-//                    //c = NumberOnlyBuildLabel.class.getDeclaredConstructor(AbstractBuild.class);
-//                    //NumberOnlyBuildLabel buildLabel = c.newInstance(action.getBuild());
-//                    NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(action.getBuild());
-//                    if (report.getCheckpoints().get(0).get("M0") ==null)
-//                        builder.add(0, "Number of Lines", buildLabel);
-//                    else
-//                    {
-//                        builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
-//                        builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M1")), "Percent Lines with comments", buildLabel);
-//                    }
-//                } catch (NoSuchMethodException e) {
-//                    e.printStackTrace();
-//                } catch (IllegalAccessException e) {
-//                    e.printStackTrace();
-//                } catch (InstantiationException e) {
-//                    e.printStackTrace();
-//                } catch (InvocationTargetException e) {
-//                    e.printStackTrace();
-//                }
             }
             action = action.getPreviousAction();
         }while(action != null);
 
         return builder.build();
     }
-    
-
-    
 }
