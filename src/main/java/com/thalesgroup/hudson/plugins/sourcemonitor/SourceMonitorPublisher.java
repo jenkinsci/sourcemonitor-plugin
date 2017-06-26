@@ -81,6 +81,8 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
                 return;
             }
 
+            run.setResult(getBuildResult(run, Result.SUCCESS));
+
             SourceMonitorResult result = new SourceMonitorResult(report, run);
             SourceMonitorBuildAction buildAction = new SourceMonitorBuildAction(run, result);
             run.addAction(buildAction);
@@ -88,5 +90,16 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
             listener.getLogger().println("End Processing sourcemonitor results");
         }
         return;
+    }
+
+    private Result getBuildResult(Run<?, ?> run, Result result) {
+        Result currentResult = result;
+        Result previousStepResult = run.getResult();
+        if (previousStepResult != null) {
+            if (previousStepResult != Result.NOT_BUILT && previousStepResult.isWorseOrEqualTo(result)) {
+                currentResult = previousStepResult;
+            }
+        }
+        return currentResult;
     }
 }
