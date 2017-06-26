@@ -41,15 +41,10 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
 
     private Run<?, ?> build;
     private SourceMonitorResult result;
-    private List<SourceMonitorProjectAction> projectActions;
 
     public SourceMonitorBuildAction(Run<?, ?> build, SourceMonitorResult result){
         this.build = build;
         this.result = result;
-
-        List<SourceMonitorProjectAction> projectActions = new ArrayList<>();
-        projectActions.add(new SourceMonitorProjectAction(build.getParent()));
-        this.projectActions = projectActions;
     }
 
     public String getIconFileName() {
@@ -113,6 +108,8 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return this.projectActions;
+        List<SourceMonitorProjectAction> projectActions = new ArrayList<>();
+        projectActions.add(new SourceMonitorProjectAction(build.getParent()));
+        return projectActions;
     }
 }
