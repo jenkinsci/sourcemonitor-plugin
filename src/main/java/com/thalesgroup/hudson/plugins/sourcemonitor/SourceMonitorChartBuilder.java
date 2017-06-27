@@ -94,8 +94,6 @@ public class SourceMonitorChartBuilder {
             SourceMonitorResult result = action.getResult();
             if(result != null){
                 SourceMonitorReport report = result.getReport();
-                java.lang.reflect.Constructor<NumberOnlyBuildLabel> c;
-
                 NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(action.getBuild());
                 if (report.getCheckpoints().get(0).get("M0") ==null)
                     builder.add(0, "Number of Lines", buildLabel);
