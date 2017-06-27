@@ -28,84 +28,16 @@
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <table class="pane sortable" id="files">
     <tr>
-      <td class="pane-header">ID</td>
       <td class="pane-header">Metric</td>
       <td class="pane-header">Value</td>
     </tr>
-    
-
-        <j:forEach var="elt" items="${it.report.checkpoints}">    
-           <tbody>
+	  <tbody>
+        <j:forEach var="metric" items="${it.report.summaryMetrics}">
 	        <tr>
-	         <td class="pane">M0</td>
-	         <td class="pane">Lines</td>
-	         <td class="pane">${elt["M0"]}</td>	   	          
+	         <td class="pane">${metric.key}</td>
+	         <td class="pane">${metric.value}</td>
 	        </tr>
-	        <tr>
-	         <td class="pane">M1</td>
-	         <td class="pane">Statements</td>
-	         <td class="pane">${elt["M1"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M2</td>
-	         <td class="pane">Percent Branch Statements</td>
-	         <td class="pane">${elt["M2"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M3</td>
-	         <td class="pane">Percent Lines with Comments</td>
-	         <td class="pane">${elt["M3"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M4</td>
-	         <td class="pane">Functions</td>
-	         <td class="pane">${elt["M4"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M5</td>
-	         <td class="pane">Average Statements per Function</td>
-	         <td class="pane">${elt["M5"]}</td>	   	          
-	        </tr>	        	        
-
-	        <tr>
-	         <td class="pane">M6</td>
-	         <td class="pane">Line Number of Most Complex Function</td>
-	         <td class="pane">${elt["M6"]}</td>	   	          
-	        </tr>	
-	        <tr>
-	         <td class="pane">M7</td>
-	         <td class="pane">Name of Most Complex Function</td>
-	         <td class="pane">${elt["M7"]}</td>	   	          
-	        </tr>	
-	        <tr>
-	         <td class="pane">M8</td>
-	         <td class="pane">Complexity of Most Complex Function</td>
-	         <td class="pane">${elt["M8"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M9</td>
-	         <td class="pane">Line Number of Deepest Block</td>
-	         <td class="pane">${elt["M9"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M10</td>
-	         <td class="pane">Maximum Block Depth</td>
-	         <td class="pane">${elt["M10"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M11</td>
-	         <td class="pane">Average Block Depth</td>
-	         <td class="pane">${elt["M11"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M12</td>
-	         <td class="pane">Average Complexity</td>
-	         <td class="pane">${elt["M12"]}</td>	   	          
-	        </tr>
-	      </tbody>    
 		</j:forEach>
-
-    
- 
+	  </tbody>
   </table>
 </j:jelly>

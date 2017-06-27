@@ -23,25 +23,135 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SourceMonitorReport implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<Map<String,String>> checkpoints;
+	private int maxComplexityThresholdMaximum = 0;
+	private static final int defaultMaxComplexityThresholdMaximum = 10;
 
-	public List<Map<String,String>> getCheckpoints() {
-		return checkpoints;
+    private int maxComplexityThresholdMinimum = 0;
+    private static final int defaultMaxComplexityThresholdMinimum = 5;
+
+    private double averageComplexityThresholdMaximum = 0;
+    private static final double defaultAverageComplexityThresholdMaximum = 6.0;
+
+    private double averageComplexityThresholdMinimum = 0;
+    private static final double defaultAverageComplexityThresholdMinimum = 3.0;
+
+    private int commentCoverageThresholdMaximum = 0;
+    private static final int defaultCommentCoverageThresholdMaximum = 50;
+
+    private int commentCoverageThresholdMinimum = 0;
+    private static final int defaultCommentCoverageThresholdMinimum = 10;
+
+    private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
+            .put("M0", "Lines")
+            .put("M1", "Statements")
+            .put("M2", "Percent Branch Statements")
+            .put("M3", "Percent Lines with Comments")
+            .put("M4", "Functions")
+            .put("M5", "Average Statements per Function")
+            .put("M6", "Line Number of Most Complex Function")
+            .put("M7", "Name of Most Complex Function")
+            .put("M8", "Complexity of Most Complex Function")
+            .put("M9", "Line Number of Deepest Block")
+            .put("M10", "Maximum Block Depth")
+            .put("M11", "Average Block Depth")
+            .put("M12", "Average Complexity")
+            .build();
+    private List<Map<String,String>> checkpoints;
+    private Map<String, String> summaryMetrics;
+
+	public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
+		this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
 	}
 
-	public void setCheckpoints(List<Map<String,String>> checkpoints) {
-		this.checkpoints = checkpoints;
-	}
+    public int getMaxComplexityThresholdMaximum() {
+        return maxComplexityThresholdMaximum == 0 ? defaultMaxComplexityThresholdMaximum : maxComplexityThresholdMaximum;
+    }
 
+    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
+        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
+    }
 
-	
-	
+    public int getMaxComplexityThresholdMinimum() {
+        return maxComplexityThresholdMinimum == 0 ? defaultMaxComplexityThresholdMinimum : maxComplexityThresholdMinimum;
+    }
+
+    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
+        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
+    }
+
+    public double getAverageComplexityThresholdMaximum() {
+        return averageComplexityThresholdMaximum == 0 ? defaultAverageComplexityThresholdMaximum : averageComplexityThresholdMaximum;
+    }
+
+    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
+        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
+    }
+
+    public double getAverageComplexityThresholdMinimum() {
+        return averageComplexityThresholdMinimum == 0 ? defaultAverageComplexityThresholdMinimum : averageComplexityThresholdMinimum;
+    }
+
+    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
+        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
+    }
+
+    public int getCommentCoverageThresholdMaximum() {
+        return commentCoverageThresholdMaximum == 0 ? defaultCommentCoverageThresholdMaximum : commentCoverageThresholdMaximum;
+    }
+
+    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
+        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
+    }
+
+    public int getCommentCoverageThresholdMinimum() {
+        return commentCoverageThresholdMinimum == 0 ? defaultCommentCoverageThresholdMinimum : commentCoverageThresholdMinimum;
+    }
+
+    @Deprecated
+    public List<Map<String,String>> getCheckpoints() {
+        return checkpoints;
+    }
+
+    @Deprecated
+    public void setCheckpoints(List<Map<String,String>> checkpoints) {
+        this.checkpoints = checkpoints;
+    }
+
+    public void setSummaryMetrics(Map<String, String> summaryMetrics) {
+        this.summaryMetrics = summaryMetrics;
+    }
+
+    public Map<String, String> getSummaryMetrics() {
+	    if (summaryMetrics == null) {
+	        return buildSummaryMetricsFromCheckpoints();
+        }
+
+        return summaryMetrics;
+    }
+
+    private Map<String, String> buildSummaryMetricsFromCheckpoints() {
+        Map<String, String> summaryMetrics = new HashMap<String, String>();
+
+        if (checkpoints.size() > 0) {
+            for (Map.Entry<String, String> entry : checkpoints.get(0).entrySet()) {
+                String key = entry.getKey();
+                String metric = oldMetricNames.get(key);
+
+                if (metric != null) {
+                    summaryMetrics.put(metric, entry.getValue());
+                }
+            }
+        }
+
+        return summaryMetrics;
+    }
 }

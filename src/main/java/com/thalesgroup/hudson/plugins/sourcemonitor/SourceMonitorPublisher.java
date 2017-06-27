@@ -81,6 +81,10 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
                 return;
             }
 
+            // Set thresholds for the report.
+            //report.setMaxComplexityThreshold(10);
+
+
             run.setResult(getBuildResult(run, Result.SUCCESS));
 
             SourceMonitorResult result = new SourceMonitorResult(report, run);

@@ -23,19 +23,19 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Action;
+import hudson.model.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import hudson.model.Run;
+import hudson.util.DescribableList;
 import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.StaplerProxy;
 
 
-public class SourceMonitorBuildAction implements Action, Serializable, StaplerProxy, SimpleBuildStep.LastBuildAction {
+public class SourceMonitorBuildAction implements HealthReportingAction, Serializable, StaplerProxy, SimpleBuildStep.LastBuildAction {
 
     public static final String URL_NAME = "sourcemonitor";
 
@@ -111,5 +111,29 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
         List<SourceMonitorProjectAction> projectActions = new ArrayList<>();
         projectActions.add(new SourceMonitorProjectAction(build.getParent()));
         return projectActions;
+    }
+
+    @Override
+    public HealthReport getBuildHealth() {
+        SourceMonitorReport report = result.getReport();
+        int maxComplexity = Integer.parseInt(report.getCheckpoints().get(0).get("M8"));
+        int maxComplexityHealth;
+
+        maxComplexityHealth = calculateHealth(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
+
+        return new HealthReport(maxComplexityHealth, "SourceMonitor: Max Complexity is " + maxComplexity);
+    }
+
+    private int calculateHealth(int value, int valueMin, int valueMax) {
+        int boundedValue = value;
+
+        // Limit the max complexity to the bounds of the thresholds
+        boundedValue = Math.max(boundedValue, valueMin);
+        boundedValue = Math.min(boundedValue, valueMax);
+
+        // Calculate the health of the maximum complexity.
+        boundedValue = ((valueMax - boundedValue) * 100) / (valueMax - valueMin);
+
+        return boundedValue;
     }
 }

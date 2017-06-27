@@ -71,26 +71,35 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 			throw new AbortException("Parsing file error");
 		}
 		
-		List<Map<String, String>> metricsCheckpointList = new ArrayList<Map<String, String>>();		
+		Map<String, String> metricsSummaryMap = new HashMap<String, String>();
+		Map<String, String> metricNameMap = new HashMap<String, String>();
 		
 		Element root = document.getRootElement();
 		Element projectElt = root.getChild("project");
-		Element checkpoints = projectElt.getChild("checkpoints");
-		List checkpointsEltList = checkpoints.getChildren();	
-		for (int i = 0; i < checkpointsEltList.size(); i++) {
-			Element checkpoint = (Element) checkpointsEltList.get(i);
-			Element metricsElt = checkpoint.getChild("metrics");
-			List metricsEltList = metricsElt.getChildren();	
-			Map<String,String> checkpointMap = new HashMap<String,String>();
-			for (int j = 0; j < metricsEltList.size(); j++) {
-				Element metricElt = (Element) metricsEltList.get(j);
-				checkpointMap.put(  metricElt.getAttributeValue("id"), metricElt.getValue() );
-								
-			}
-			metricsCheckpointList.add(checkpointMap);
-		}
 
-		sourceMonitorReport.setCheckpoints(metricsCheckpointList);
+		// Parse the Metric Names.
+		Element metricNames = projectElt.getChild("metric_names");
+		List metricNamesEltList = metricNames.getChildren();
+		for (int i = 0; i < metricNamesEltList.size(); i++) {
+		    Element metricNameElt = (Element)metricNamesEltList.get(i);
+		    metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
+        }
+
+		// Parse Summary checkpoint data.
+        Element checkpoints = projectElt.getChild("checkpoints");
+        List checkpointsEltList = checkpoints.getChildren();
+        for (int i = 0; i < checkpointsEltList.size(); i++) {
+            Element checkpoint = (Element) checkpointsEltList.get(i);
+            Element metricsElt = checkpoint.getChild("metrics");
+            List metricsEltList = metricsElt.getChildren();
+            for (int j = 0; j < metricsEltList.size(); j++) {
+                Element metricElt = (Element) metricsEltList.get(j);
+                metricsSummaryMap.put(metricNameMap.get(metricElt.getAttributeValue("id")), metricElt.getValue());
+            }
+        }
+
+		sourceMonitorReport.setSummaryMetrics(metricsSummaryMap);
+
 		return sourceMonitorReport;
 	}
 
