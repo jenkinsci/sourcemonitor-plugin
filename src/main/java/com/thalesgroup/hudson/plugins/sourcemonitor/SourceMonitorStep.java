@@ -24,14 +24,19 @@
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 
+import com.google.common.collect.ImmutableSet;
 import hudson.Extension;
-import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
-import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
-public class SourceMonitorStep extends AbstractStepImpl {
+public class SourceMonitorStep extends Step {
     private String summaryFilePath;
 
     @DataBoundConstructor
@@ -43,10 +48,16 @@ public class SourceMonitorStep extends AbstractStepImpl {
         return summaryFilePath;
     }
 
+    @Override
+    public StepExecution start(StepContext stepContext) throws Exception {
+        return new SourceMonitorStepExecution(this, stepContext);
+    }
+
     @Extension
-    public static class DescriptorImpl extends AbstractStepDescriptorImpl {
-        public DescriptorImpl() {
-            super(SourceMonitorStepExecution.class);
+    public static class DescriptorImpl extends StepDescriptor {
+        @Override
+        public Set<? extends Class<?>> getRequiredContext() {
+            return ImmutableSet.of(FilePath.class, Run.class, Launcher.class, TaskListener.class);
         }
 
         @Override

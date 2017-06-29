@@ -27,29 +27,24 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
-import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
-import javax.inject.Inject;
+public class SourceMonitorStepExecution extends SynchronousNonBlockingStepExecution {
+    private transient final SourceMonitorStep step;
 
-public class SourceMonitorStepExecution extends AbstractSynchronousNonBlockingStepExecution {
-    @StepContextParameter
-    private transient TaskListener listener;
-
-    @StepContextParameter
-    private transient FilePath ws;
-
-    @StepContextParameter
-    private transient Run build;
-
-    @StepContextParameter
-    private transient Launcher launcher;
-
-    @Inject
-    private transient SourceMonitorStep step;
+    SourceMonitorStepExecution(SourceMonitorStep step, StepContext context) {
+        super(context);
+        this.step = step;
+    }
 
     @Override
     protected Object run() throws Exception {
+        TaskListener listener = getContext().get(TaskListener.class);
+        FilePath ws = getContext().get(FilePath.class);
+        Run build = getContext().get(Run.class);
+        Launcher launcher = getContext().get(Launcher.class);
+
         listener.getLogger().println("Running Source Monitor Parser step.");
 
         SourceMonitorPublisher publisher = new SourceMonitorPublisher(step.getSummaryFilePath());
