@@ -23,6 +23,9 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -40,35 +43,36 @@ public class SourceMonitorSummary {
     }
 
     public static String createReportSummaryDetails(SourceMonitorReport report, SourceMonitorReport previousReport){
-
     	StringBuilder builder = new StringBuilder();
-  
-    
-    	Iterator<Map<String, String>>  iteratorPrevious = null;
-    	if(previousReport != null){
-    		iteratorPrevious = previousReport.getCheckpoints().iterator();
-    	}
-    	
-    	for (Map<String,String> checkpoint:report.getCheckpoints()){
-    		builder.append("<li>");	
-    		builder.append("Number of Lines :");
-    		builder.append(checkpoint.get("M0"));
-            if(previousReport != null){
-            	Map<String, String> previousCheckpoint = iteratorPrevious.next();
-                printDifference(Integer.parseInt(checkpoint.get("M0")), Integer.parseInt(previousCheckpoint.get("M10")), builder);
+    	Map<String, String> previousReportMetrics = previousReport.getSummaryMetrics();
+
+    	for (Map.Entry<String,String> entry:report.getSummaryMetrics().entrySet()) {
+    	    if (NumberUtils.isNumber(entry.getValue())) {
+                builder.append("<li>");
+                builder.append(entry.getKey());
+                builder.append(" : ");
+                builder.append(entry.getValue());
+                if (previousReportMetrics.containsKey(entry.getKey())) {
+                    printDifference(Double.parseDouble(entry.getValue()), Double.parseDouble(previousReportMetrics.get(entry.getKey())), builder);
+                }
+                builder.append("</li>");
             }
-            builder.append("</li>");
     	}
         return builder.toString();
     }
 
-    private static void printDifference(int current, int previous, StringBuilder builder){
-        float difference = current - previous;
+    private static void printDifference(double current, double previous, StringBuilder builder){
+        // Calculate the difference.
+        double difference = current - previous;
+
         builder.append(" (");
 
         if(difference >= 0){
             builder.append('+');
+        } else {
+            builder.append('-');
         }
+
         builder.append(difference);
         builder.append(")");
     }
