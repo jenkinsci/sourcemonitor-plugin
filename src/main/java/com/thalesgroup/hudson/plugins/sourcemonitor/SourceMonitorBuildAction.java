@@ -91,7 +91,7 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
     }
 
     SourceMonitorBuildAction getPreviousAction(){
-        Run<?, ?> previousBuild = this.build.getPreviousBuild();
+        Run<?, ?> previousBuild = this.build.getPreviousSuccessfulBuild();
         if(previousBuild != null){
             return previousBuild.getAction(SourceMonitorBuildAction.class);
         }
