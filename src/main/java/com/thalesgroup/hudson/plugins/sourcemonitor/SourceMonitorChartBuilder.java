@@ -77,11 +77,8 @@ public class SourceMonitorChartBuilder {
         // crop extra space around the graph
         plot.setInsets(new RectangleInsets(0, 0, 0, 5.0));
 
-        
         CategoryItemRenderer firstRender= new DefaultCategoryItemRenderer();
-        SourceMonitorRenderer renderer = new SourceMonitorRenderer(action.getUrlName());
-        plot.setRenderer(firstRender); 
-        
+        plot.setRenderer(firstRender);
 
         return chart;
     }
