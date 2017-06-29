@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import hudson.util.DescribableList;
 import jenkins.tasks.SimpleBuildStep;
+import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.StaplerProxy;
 
 
@@ -116,24 +116,54 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
     @Override
     public HealthReport getBuildHealth() {
         SourceMonitorReport report = result.getReport();
-        int maxComplexity = Integer.parseInt(report.getCheckpoints().get(0).get("M8"));
+        int maxComplexity = Integer.parseInt(report.getSummaryMetrics().get("Complexity of Most Complex Function"));
         int maxComplexityHealth;
+        double commentCoverage = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
+        int commentCoverageHealth;
+        double averageComplexity = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
+        int averageComplexityHealth;
+        int minimumHealth;
+        Localizable description;
 
-        maxComplexityHealth = calculateHealth(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
+        maxComplexityHealth = calculateHealthReverse(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
+        commentCoverageHealth = calculateHealth(commentCoverage, report.getCommentCoverageThresholdMinimum(), report.getCommentCoverageThresholdMaximum());
+        averageComplexityHealth = calculateHealthReverse(averageComplexity, report.getAverageComplexityThresholdMinimum(), report.getAverageComplexityThresholdMaximum());
 
-        return new HealthReport(maxComplexityHealth, "SourceMonitor: Max Complexity is " + maxComplexity);
+        if ((maxComplexityHealth < commentCoverageHealth) && (maxComplexityHealth < averageComplexityHealth)) {
+            minimumHealth = maxComplexityHealth;
+            description = Messages._SourceMonitorBuildAction_healthReportMaxComplexityDescription(maxComplexity);
+        } else if ((commentCoverageHealth < maxComplexityHealth) && (commentCoverageHealth < averageComplexityHealth)) {
+            minimumHealth = commentCoverageHealth;
+            description = Messages._SourceMonitorBuildAction_healthReportCommentCoverageDescription(commentCoverage);
+        } else {
+            minimumHealth = averageComplexityHealth;
+            description = Messages._SourceMonitorBuildAction_healthReportAverageComplexityDescription(averageComplexity);
+        }
+
+        return new HealthReport(minimumHealth, description);
     }
 
-    private int calculateHealth(int value, int valueMin, int valueMax) {
-        int boundedValue = value;
+    private int calculateHealthReverse(double value, double valueMin, double valueMax) {
+        double boundedValue = value;
 
         // Limit the max complexity to the bounds of the thresholds
         boundedValue = Math.max(boundedValue, valueMin);
         boundedValue = Math.min(boundedValue, valueMax);
 
-        // Calculate the health of the maximum complexity.
         boundedValue = ((valueMax - boundedValue) * 100) / (valueMax - valueMin);
 
-        return boundedValue;
+        return (int)boundedValue;
+    }
+
+    private int calculateHealth(double value, double valueMin, double valueMax) {
+        double boundedValue = value;
+
+        // Limit the max complexity to the bounds of the thresholds
+        boundedValue = Math.max(boundedValue, valueMin);
+        boundedValue = Math.min(boundedValue, valueMax);
+
+        boundedValue = ((boundedValue - valueMin) * 100) / (valueMax - valueMin);
+
+        return (int)boundedValue;
     }
 }

@@ -54,7 +54,7 @@ public class SourceMonitorChartBuilder {
     }
 
     public static JFreeChart buildChart(SourceMonitorBuildAction action){
-        JFreeChart chart = ChartFactory.createStackedAreaChart(null, null, "See Legend", buildDataset(action), PlotOrientation.VERTICAL, true, false, true);
+        JFreeChart chart = ChartFactory.createStackedAreaChart(null, null, "See Legend", buildDataSet(action), PlotOrientation.VERTICAL, true, false, true);
 
         chart.setBackgroundPaint(Color.white);
 
@@ -83,7 +83,7 @@ public class SourceMonitorChartBuilder {
         return chart;
     }
 
-    private static CategoryDataset buildDataset(SourceMonitorBuildAction lastAction){
+    private static CategoryDataset buildDataSet(SourceMonitorBuildAction lastAction){
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
 
         SourceMonitorBuildAction action = lastAction;
@@ -92,13 +92,13 @@ public class SourceMonitorChartBuilder {
             if(result != null){
                 SourceMonitorReport report = result.getReport();
                 NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(action.getBuild());
-                if (report.getCheckpoints().get(0).get("M0") ==null)
+                if (report.getSummaryMetrics().size() == 0) {
                     builder.add(0, "Number of Lines", buildLabel);
-                else
-                {
-                    builder.add(Double.parseDouble(report.getCheckpoints().get(0).get("M3")), "Percent Lines with comments", buildLabel);
-                    builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M8")), "Complexity of Most Complex Function", buildLabel);
-                    builder.add(Double.parseDouble(report.getCheckpoints().get(0).get("M12")), "Average Complexity", buildLabel);
+                }
+                else {
+                    builder.add(Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments")), "Percent Lines with comments", buildLabel);
+                    builder.add(Integer.parseInt(report.getSummaryMetrics().get("Complexity of Most Complex Function")), "Complexity of Most Complex Function", buildLabel);
+                    builder.add(Double.parseDouble(report.getSummaryMetrics().get("Average Complexity")), "Average Complexity", buildLabel);
                 }
             }
             action = action.getPreviousAction();
