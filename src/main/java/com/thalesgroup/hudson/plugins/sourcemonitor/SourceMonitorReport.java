@@ -33,22 +33,11 @@ public class SourceMonitorReport implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private int maxComplexityThresholdMaximum = 0;
-	private static final int defaultMaxComplexityThresholdMaximum = 10;
-
     private int maxComplexityThresholdMinimum = 0;
-    private static final int defaultMaxComplexityThresholdMinimum = 5;
-
     private double averageComplexityThresholdMaximum = 0;
-    private static final double defaultAverageComplexityThresholdMaximum = 6.0;
-
     private double averageComplexityThresholdMinimum = 0;
-    private static final double defaultAverageComplexityThresholdMinimum = 3.0;
-
     private int commentCoverageThresholdMaximum = 0;
-    private static final int defaultCommentCoverageThresholdMaximum = 50;
-
     private int commentCoverageThresholdMinimum = 0;
-    private static final int defaultCommentCoverageThresholdMinimum = 10;
 
     private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
             .put("M0", "Lines")
@@ -72,49 +61,37 @@ public class SourceMonitorReport implements Serializable {
 		this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
 	}
 
-    public int getMaxComplexityThresholdMaximum() {
-        return maxComplexityThresholdMaximum == 0 ? defaultMaxComplexityThresholdMaximum : maxComplexityThresholdMaximum;
-    }
+    public int getMaxComplexityThresholdMaximum() { return maxComplexityThresholdMaximum; }
 
     public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
         this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
     }
 
-    public int getMaxComplexityThresholdMinimum() {
-        return maxComplexityThresholdMinimum == 0 ? defaultMaxComplexityThresholdMinimum : maxComplexityThresholdMinimum;
-    }
+    public int getMaxComplexityThresholdMinimum() { return maxComplexityThresholdMinimum; }
 
     public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
         this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
     }
 
-    public double getAverageComplexityThresholdMaximum() {
-        return averageComplexityThresholdMaximum == 0 ? defaultAverageComplexityThresholdMaximum : averageComplexityThresholdMaximum;
-    }
+    public double getAverageComplexityThresholdMaximum() { return averageComplexityThresholdMaximum; }
 
     public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
         this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
     }
 
-    public double getAverageComplexityThresholdMinimum() {
-        return averageComplexityThresholdMinimum == 0 ? defaultAverageComplexityThresholdMinimum : averageComplexityThresholdMinimum;
-    }
+    public double getAverageComplexityThresholdMinimum() { return averageComplexityThresholdMinimum; }
 
     public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
         this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
     }
 
-    public int getCommentCoverageThresholdMaximum() {
-        return commentCoverageThresholdMaximum == 0 ? defaultCommentCoverageThresholdMaximum : commentCoverageThresholdMaximum;
-    }
+    public int getCommentCoverageThresholdMaximum() { return commentCoverageThresholdMaximum; }
 
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
     }
 
-    public int getCommentCoverageThresholdMinimum() {
-        return commentCoverageThresholdMinimum == 0 ? defaultCommentCoverageThresholdMinimum : commentCoverageThresholdMinimum;
-    }
+    public int getCommentCoverageThresholdMinimum() { return commentCoverageThresholdMinimum; }
 
     @Deprecated
     public List<Map<String,String>> getCheckpoints() {

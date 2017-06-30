@@ -117,17 +117,23 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
     public HealthReport getBuildHealth() {
         SourceMonitorReport report = result.getReport();
         int maxComplexity = Integer.parseInt(report.getSummaryMetrics().get("Complexity of Most Complex Function"));
-        int maxComplexityHealth;
+        int maxComplexityHealth = 101;
         double commentCoverage = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
-        int commentCoverageHealth;
+        int commentCoverageHealth = 101;
         double averageComplexity = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
-        int averageComplexityHealth;
+        int averageComplexityHealth = 101;
         int minimumHealth;
         Localizable description;
 
-        maxComplexityHealth = calculateHealthReverse(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
-        commentCoverageHealth = calculateHealth(commentCoverage, report.getCommentCoverageThresholdMinimum(), report.getCommentCoverageThresholdMaximum());
-        averageComplexityHealth = calculateHealthReverse(averageComplexity, report.getAverageComplexityThresholdMinimum(), report.getAverageComplexityThresholdMaximum());
+        if (report.getMaxComplexityThresholdMaximum() > 0) {
+            maxComplexityHealth = calculateHealthReverse(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
+        }
+        if (report.getCommentCoverageThresholdMaximum() > 0) {
+            commentCoverageHealth = calculateHealth(commentCoverage, report.getCommentCoverageThresholdMinimum(), report.getCommentCoverageThresholdMaximum());
+        }
+        if (report.getAverageComplexityThresholdMaximum() > 0) {
+            averageComplexityHealth = calculateHealthReverse(averageComplexity, report.getAverageComplexityThresholdMinimum(), report.getAverageComplexityThresholdMaximum());
+        }
 
         if ((maxComplexityHealth < commentCoverageHealth) && (maxComplexityHealth < averageComplexityHealth)) {
             minimumHealth = maxComplexityHealth;
@@ -140,7 +146,14 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
             description = Messages._SourceMonitorBuildAction_healthReportAverageComplexityDescription(averageComplexity);
         }
 
-        return new HealthReport(minimumHealth, description);
+        HealthReport healthReport = null;
+
+        // Only generate the health report when the health is valid.
+        if (minimumHealth <= 100) {
+            healthReport = new HealthReport(minimumHealth, description);
+        }
+
+        return healthReport;
     }
 
     private int calculateHealthReverse(double value, double valueMin, double valueMax) {
