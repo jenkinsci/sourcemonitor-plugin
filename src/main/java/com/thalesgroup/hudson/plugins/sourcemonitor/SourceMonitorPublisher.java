@@ -39,7 +39,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 
-
+@SuppressWarnings("unchecked")
 public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep {
     private static final long serialVersionUID = 1L;
 
