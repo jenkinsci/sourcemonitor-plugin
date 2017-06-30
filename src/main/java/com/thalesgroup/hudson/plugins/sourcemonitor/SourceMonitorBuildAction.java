@@ -121,7 +121,7 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
         int maxComplexityHealth = 101;
         double commentCoverage = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
         int commentCoverageHealth = 101;
-        double averageComplexity = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
+        double averageComplexity = Double.parseDouble(report.getSummaryMetrics().get("Average Complexity"));
         int averageComplexityHealth = 101;
         int minimumHealth;
         Localizable description;
