@@ -30,7 +30,8 @@ import hudson.model.TaskListener;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
-public class SourceMonitorStepExecution extends SynchronousNonBlockingStepExecution {
+public class SourceMonitorStepExecution extends SynchronousNonBlockingStepExecution<Void> {
+    private static final long serialVersionUID = 1L;
     private transient final SourceMonitorStep step;
 
     SourceMonitorStepExecution(SourceMonitorStep step, StepContext context) {
@@ -39,7 +40,7 @@ public class SourceMonitorStepExecution extends SynchronousNonBlockingStepExecut
     }
 
     @Override
-    protected Object run() throws Exception {
+    protected Void run() throws Exception {
         TaskListener listener = getContext().get(TaskListener.class);
         FilePath ws = getContext().get(FilePath.class);
         Run build = getContext().get(Run.class);

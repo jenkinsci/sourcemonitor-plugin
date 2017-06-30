@@ -31,7 +31,6 @@ import java.io.Serializable;
 
 
 public class SourceMonitorResult implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	
 	private SourceMonitorReport report;
@@ -53,6 +52,7 @@ public class SourceMonitorResult implements Serializable {
 
 
     private static class BreadCrumbResult extends SourceMonitorResult implements ModelObject {
+        private static final long serialVersionUID = 1L;
 
         private String displayName = null;
         

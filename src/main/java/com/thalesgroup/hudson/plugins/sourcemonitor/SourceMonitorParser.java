@@ -44,7 +44,6 @@ import org.jdom.input.SAXBuilder;
 import org.jenkinsci.remoting.RoleChecker;
 
 public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorReport> {
-
 	private static final long serialVersionUID = 1L;
 
     private int maxComplexityThresholdMaximum = 0;
@@ -86,7 +85,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
 		// Parse the Metric Names.
 		Element metricNames = projectElt.getChild("metric_names");
-		List metricNamesEltList = metricNames.getChildren();
+		List<?> metricNamesEltList = metricNames.getChildren();
 		for (int i = 0; i < metricNamesEltList.size(); i++) {
 		    Element metricNameElt = (Element)metricNamesEltList.get(i);
 		    metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
@@ -94,13 +93,13 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
 		// Parse Summary checkpoint data.
         Element checkpoints = projectElt.getChild("checkpoints");
-        List checkpointsEltList = checkpoints.getChildren();
+        List<?> checkpointsEltList = checkpoints.getChildren();
         for (int i = 0; i < checkpointsEltList.size(); i++) {
-            Element checkpoint = (Element) checkpointsEltList.get(i);
+            Element checkpoint = (Element)checkpointsEltList.get(i);
             Element metricsElt = checkpoint.getChild("metrics");
-            List metricsEltList = metricsElt.getChildren();
+            List<?> metricsEltList = metricsElt.getChildren();
             for (int j = 0; j < metricsEltList.size(); j++) {
-                Element metricElt = (Element) metricsEltList.get(j);
+                Element metricElt = (Element)metricsEltList.get(j);
                 metricsSummaryMap.put(metricNameMap.get(metricElt.getAttributeValue("id")), metricElt.getValue());
             }
         }

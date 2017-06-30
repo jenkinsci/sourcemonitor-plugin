@@ -35,7 +35,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 
 public class SourceMonitorProjectAction implements Action, Serializable {
-    
+    private static final long serialVersionUID = 1L;
+
     public static final String URL_NAME = "sourceMonitorResult";
 
     public static final int CHART_WIDTH = 500;

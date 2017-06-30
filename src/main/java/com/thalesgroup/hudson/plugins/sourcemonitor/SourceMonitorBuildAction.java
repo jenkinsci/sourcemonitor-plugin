@@ -36,6 +36,7 @@ import org.kohsuke.stapler.StaplerProxy;
 
 
 public class SourceMonitorBuildAction implements HealthReportingAction, Serializable, StaplerProxy, SimpleBuildStep.LastBuildAction {
+    private static final long serialVersionUID = 1L;
 
     public static final String URL_NAME = "sourcemonitor";
 

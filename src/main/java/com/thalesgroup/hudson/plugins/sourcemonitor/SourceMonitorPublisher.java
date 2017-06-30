@@ -40,8 +40,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import javax.annotation.Nonnull;
 
 
-public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep{
-
+public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep {
     private static final long serialVersionUID = 1L;
 
     private final String summaryFilePath;
@@ -124,10 +123,6 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
                 run.setResult(Result.FAILURE);
                 return;
             }
-
-            // Set thresholds for the report.
-            //report.setMaxComplexityThreshold(10);
-
 
             run.setResult(getBuildResult(run, Result.SUCCESS));
 
