@@ -27,6 +27,9 @@ import hudson.model.*;
 import hudson.util.ChartUtil;
 import java.io.IOException;
 import java.io.Serializable;
+
+import hudson.util.Graph;
+import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -100,28 +103,6 @@ public class SourceMonitorProjectAction implements Action, Serializable {
     }
 
     /**
-     * Display the trend map.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error
-     */
-    public void doTrendMap(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        Run<?,?> lastBuild = this.getLastFinishedBuild();
-        SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
-
-        ChartUtil.generateClickableMap(
-                request,
-                response,
-                SourceMonitorChartBuilder.buildChart(lastAction),
-                CHART_WIDTH,
-                CHART_HEIGHT);
-    }
-
-    /**
      * Display the trend graph.
      *
      * @param request
@@ -133,13 +114,13 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      */
     public void doTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
         Run<?,?> lastBuild = this.getLastFinishedBuild();
-        SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
+        final SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
 
-        ChartUtil.generateGraph(
-                request,
-                response,
-                SourceMonitorChartBuilder.buildChart(lastAction),
-                CHART_WIDTH,
-                CHART_HEIGHT);
+        new Graph(lastBuild.getTimestamp(), CHART_WIDTH, CHART_HEIGHT) {
+            @Override
+            protected JFreeChart createGraph() {
+                return SourceMonitorChartBuilder.buildChart(lastAction);
+            }
+        }.doPng(request, response);
     }
 }
