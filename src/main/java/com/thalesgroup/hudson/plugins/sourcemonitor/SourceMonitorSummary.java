@@ -66,8 +66,6 @@ public class SourceMonitorSummary {
 
         if(difference >= 0){
             builder.append('+');
-        } else {
-            builder.append('-');
         }
 
         builder.append(difference);
