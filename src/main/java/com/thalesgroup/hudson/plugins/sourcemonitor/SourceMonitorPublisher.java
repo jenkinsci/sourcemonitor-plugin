@@ -35,6 +35,7 @@ import java.io.Serializable;
 
 import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 
@@ -44,7 +45,13 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     private static final long serialVersionUID = 1L;
 
     private final String summaryFilePath;
-    
+    private int maxComplexityThresholdMaximum = 0;
+    private int maxComplexityThresholdMinimum = 0;
+    private double averageComplexityThresholdMaximum = 0;
+    private double averageComplexityThresholdMinimum = 0;
+    private int commentCoverageThresholdMaximum = 0;
+    private int commentCoverageThresholdMinimum = 0;
+
     @DataBoundConstructor
     public SourceMonitorPublisher(String summaryFilePath){
         this.summaryFilePath = summaryFilePath;
@@ -62,6 +69,35 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
 		return summaryFilePath;
 	}
 
+	@DataBoundSetter
+    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
+        this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
+        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
+        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
+        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
+        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
+        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
+    }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
@@ -71,6 +107,14 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
 
             PrintStream logger = listener.getLogger();
             SourceMonitorParser parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath));
+
+            // Set the parameters for the health metrics.
+            parser.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);
+            parser.setAverageComplexityThresholdMinimum(averageComplexityThresholdMinimum);
+            parser.setCommentCoverageThresholdMaximum(commentCoverageThresholdMaximum);
+            parser.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
+            parser.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
+            parser.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
 
             SourceMonitorReport report;
             try{

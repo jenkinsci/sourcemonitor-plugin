@@ -47,6 +47,12 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
 	private static final long serialVersionUID = 1L;
 
+    private int maxComplexityThresholdMaximum = 0;
+    private int maxComplexityThresholdMinimum = 0;
+    private double averageComplexityThresholdMaximum = 0;
+    private double averageComplexityThresholdMinimum = 0;
+    private int commentCoverageThresholdMaximum = 0;
+    private int commentCoverageThresholdMinimum = 0;
 	private FilePath resultFilePath;
 	private static final Logger LOGGER = Logger.getLogger(SourceMonitorParser.class.getName());
 
@@ -62,7 +68,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
 		SourceMonitorReport sourceMonitorReport = new SourceMonitorReport();
 
-		Document document = null;
+		Document document;
+
 		try {
 			SAXBuilder sxb = new SAXBuilder();
 			document = sxb.build(new InputStreamReader(new FileInputStream(new File(resultFilePath.toURI())), "UTF-8"));
@@ -100,6 +107,14 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
 		sourceMonitorReport.setSummaryMetrics(metricsSummaryMap);
 
+        // Set the parameters for the health metrics.
+        sourceMonitorReport.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);
+        sourceMonitorReport.setAverageComplexityThresholdMinimum(averageComplexityThresholdMinimum);
+        sourceMonitorReport.setCommentCoverageThresholdMaximum(commentCoverageThresholdMaximum);
+        sourceMonitorReport.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
+        sourceMonitorReport.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
+        sourceMonitorReport.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
+
 		return sourceMonitorReport;
 	}
 
@@ -111,7 +126,31 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 		this.resultFilePath = resultFilePath;
 	}
 
-	@Override
+    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
+	    this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
+        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
+    }
+
+    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
+        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
+    }
+
+    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
+        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
+    }
+
+    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
+        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
+    }
+
+    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
+        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
+    }
+
+    @Override
 	public void checkRoles(RoleChecker checker) throws SecurityException {
 	}
 }

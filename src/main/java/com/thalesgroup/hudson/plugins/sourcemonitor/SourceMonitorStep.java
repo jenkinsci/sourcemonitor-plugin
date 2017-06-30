@@ -32,20 +32,75 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class SourceMonitorStep extends Step {
     private String summaryFilePath;
+    private int maxComplexityThresholdMaximum = 0;
+    private int maxComplexityThresholdMinimum = 0;
+    private double averageComplexityThresholdMaximum = 0;
+    private double averageComplexityThresholdMinimum = 0;
+    private int commentCoverageThresholdMaximum = 0;
+    private int commentCoverageThresholdMinimum = 0;
 
     @DataBoundConstructor
     public SourceMonitorStep(String summaryFilePath){
         this.summaryFilePath = summaryFilePath;
     }
 
+    @DataBoundSetter
+    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
+        this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
+        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
+        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
+        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
+        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
+        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
+    }
+
     public String getSummaryFilePath() {
         return summaryFilePath;
+    }
+    public int getMaxComplexityThresholdMaximum() {
+        return maxComplexityThresholdMaximum;
+    }
+    public int getMaxComplexityThresholdMinimum() {
+        return maxComplexityThresholdMinimum;
+    }
+    public double getAverageComplexityThresholdMaximum() {
+        return averageComplexityThresholdMaximum;
+    }
+    public double getAverageComplexityThresholdMinimum() {
+        return averageComplexityThresholdMinimum;
+    }
+    public int getCommentCoverageThresholdMaximum() {
+        return commentCoverageThresholdMaximum;
+    }
+    public int getCommentCoverageThresholdMinimum() {
+        return commentCoverageThresholdMinimum;
     }
 
     @Override

@@ -24,8 +24,26 @@
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-	<f:entry title="${%SourceMonitor summary metric file path}">
+	<f:entry field="summaryFilePath" title="${%SourceMonitor summary metric file path}">
 		<f:textbox name="summaryFilePath" value="${instance.summaryFilePath}"/>
+	</f:entry>
+	<f:entry field="maxComplexityThresholdMaximum" title="${%Max complexity maximum threshold}">
+		<f:textbox name="maxComplexityThresholdMaximum" value="${instance.maxComplexityThresholdMaximum}"/>
+	</f:entry>
+	<f:entry field="maxComplexityThresholdMinimum" title="${%Max complexity minimum threshold}">
+		<f:textbox name="maxComplexityThresholdMinimum" value="${instance.maxComplexityThresholdMinimum}"/>
+	</f:entry>
+	<f:entry field="averageComplexityThresholdMaximum" title="${%Average complexity maximum threshold}">
+		<f:textbox name="averageComplexityThresholdMaximum" value="${instance.averageComplexityThresholdMaximum}"/>
+	</f:entry>
+	<f:entry field="averageComplexityThresholdMinimum" title="${%Average complexity minimum threshold}">
+		<f:textbox name="averageComplexityThresholdMinimum" value="${instance.averageComplexityThresholdMinimum}"/>
+	</f:entry>
+	<f:entry field="commentCoverageThresholdMaximum" title="${%Comment coverage maximum threshold}">
+		<f:textbox name="commentCoverageThresholdMaximum" value="${instance.commentCoverageThresholdMaximum}"/>
+	</f:entry>
+	<f:entry field="commentCoverageThresholdMinimum" title="${%Comment coverage minimum threshold}">
+		<f:textbox name="commentCoverageThresholdMinimum" value="${instance.commentCoverageThresholdMinimum}"/>
 	</f:entry>
 
 </j:jelly>
