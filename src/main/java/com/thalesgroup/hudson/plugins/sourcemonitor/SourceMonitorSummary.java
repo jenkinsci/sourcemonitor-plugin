@@ -23,11 +23,8 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class SourceMonitorSummary {
 
@@ -44,7 +41,7 @@ public class SourceMonitorSummary {
 
     public static String createReportSummaryDetails(SourceMonitorReport report, SourceMonitorReport previousReport){
     	StringBuilder builder = new StringBuilder();
-    	Map<String, String> previousReportMetrics = previousReport.getSummaryMetrics();
+    	Map<String, String> previousReportMetrics = previousReport != null ? previousReport.getSummaryMetrics() : new HashMap<String, String>();
 
     	for (Map.Entry<String,String> entry:report.getSummaryMetrics().entrySet()) {
     	    if (NumberUtils.isNumber(entry.getValue())) {
