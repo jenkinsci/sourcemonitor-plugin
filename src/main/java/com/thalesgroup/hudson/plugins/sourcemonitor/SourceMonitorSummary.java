@@ -24,9 +24,12 @@
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 import org.apache.commons.lang.math.NumberUtils;
+
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class SourceMonitorSummary {
+    private static final DecimalFormat decimalFormat = new DecimalFormat("0.0#");
 
     private SourceMonitorSummary(){
         super();
@@ -68,7 +71,7 @@ public class SourceMonitorSummary {
             builder.append('+');
         }
 
-        builder.append(difference);
+        builder.append(decimalFormat.format(difference));
         builder.append(")");
     }
 }
