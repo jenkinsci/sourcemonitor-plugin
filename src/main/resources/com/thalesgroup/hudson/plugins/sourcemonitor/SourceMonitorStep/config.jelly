@@ -28,22 +28,22 @@
 		<f:textbox name="summaryFilePath" value="${instance.summaryFilePath}"/>
 	</f:entry>
 	<f:entry field="maxComplexityThresholdMaximum" title="${%Max complexity maximum threshold}">
-		<f:textbox name="maxComplexityThresholdMaximum" value="${instance.maxComplexityThresholdMaximum}"/>
+		<f:number default="10" min="0" step="1" size="10"/>
 	</f:entry>
 	<f:entry field="maxComplexityThresholdMinimum" title="${%Max complexity minimum threshold}">
-		<f:textbox name="maxComplexityThresholdMinimum" value="${instance.maxComplexityThresholdMinimum}"/>
+		<f:number default="0" min="0" step="1" size="10"/>
 	</f:entry>
 	<f:entry field="averageComplexityThresholdMaximum" title="${%Average complexity maximum threshold}">
-		<f:textbox name="averageComplexityThresholdMaximum" value="${instance.averageComplexityThresholdMaximum}"/>
+		<f:number default="10" min="0" step="0.1" size="10"/>
 	</f:entry>
 	<f:entry field="averageComplexityThresholdMinimum" title="${%Average complexity minimum threshold}">
-		<f:textbox name="averageComplexityThresholdMinimum" value="${instance.averageComplexityThresholdMinimum}"/>
+		<f:number default="0" min="0" step="0.1" size="10"/>
 	</f:entry>
 	<f:entry field="commentCoverageThresholdMaximum" title="${%Comment coverage maximum threshold}">
-		<f:textbox name="commentCoverageThresholdMaximum" value="${instance.commentCoverageThresholdMaximum}"/>
+		<f:number default="50" min="0" step="1" size="10"/>
 	</f:entry>
 	<f:entry field="commentCoverageThresholdMinimum" title="${%Comment coverage minimum threshold}">
-		<f:textbox name="commentCoverageThresholdMinimum" value="${instance.commentCoverageThresholdMinimum}"/>
+		<f:number default="0" min="0" step="1" size="10"/>
 	</f:entry>
 
 </j:jelly>

@@ -23,16 +23,17 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
-
 import com.google.common.collect.ImmutableSet;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.FormValidation;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -125,5 +126,40 @@ public class SourceMonitorStep extends Step {
         public String getDisplayName() {
             return "Source Monitor Parser";
         }
+
+        public FormValidation doCheckSummaryFilePath(@QueryParameter String value) {
+            if (value.isEmpty()) {
+                return FormValidation.error("A valid file/path is required.");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckMaxComplexityThresholdMaximum(@QueryParameter int value,
+                                                                   @QueryParameter int maxComplexityThresholdMinimum) {
+            if (value == 0) return FormValidation.warning("Max complexity health reporting disabled");
+            if (value <= maxComplexityThresholdMinimum) {
+                return FormValidation.error("The threshold maximum must be greater than the threshold minimum.");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckAverageComplexityThresholdMaximum(@QueryParameter double value,
+                                                                       @QueryParameter int averageComplexityThresholdMinimum) {
+            if (value == 0) return FormValidation.warning("Average complexity health reporting disabled");
+            if (value <= averageComplexityThresholdMinimum) {
+                return FormValidation.error("The threshold maximum must be greater than the threshold minimum.");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckCommentCoverageThresholdMaximum(@QueryParameter double value,
+                                                                     @QueryParameter int commentCoverageThresholdMinimum) {
+            if (value == 0) return FormValidation.warning("Comment coverage health reporting disabled");
+            if (value <= commentCoverageThresholdMinimum) {
+                return FormValidation.error("The threshold maximum must be greater than the threshold minimum.");
+            }
+            return FormValidation.ok();
+        }
+
     }
 }
