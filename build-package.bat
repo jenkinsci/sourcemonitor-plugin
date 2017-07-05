@@ -1,2 +1,2 @@
 @echo off
-mvn clean package -DskipTests
+mvn clean package

@@ -22,6 +22,7 @@
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
 -->
+<?jelly escape-by-default='true'?>
 <div>
   This plug-in collects the <a href="http://www.campwoodsw.com/sourcemonitor.html">SourceMonitor</a> analysis results of the project and visualizes the checkpoints.
 </div>
