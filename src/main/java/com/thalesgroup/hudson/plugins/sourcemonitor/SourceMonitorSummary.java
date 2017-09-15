@@ -42,12 +42,12 @@ public class SourceMonitorSummary {
         return builder.toString();
     }
 
-    public static String createReportSummaryDetails(SourceMonitorReport report, SourceMonitorReport previousReport){
-    	StringBuilder builder = new StringBuilder();
-    	Map<String, String> previousReportMetrics = previousReport != null ? previousReport.getSummaryMetrics() : new HashMap<String, String>();
+    public static String createReportSummaryDetails(SourceMonitorReport report, SourceMonitorReport previousReport) {
+        StringBuilder builder = new StringBuilder();
+        Map<String, String> previousReportMetrics = previousReport != null ? previousReport.getSummaryMetrics() : new HashMap<String, String>();
 
-    	for (Map.Entry<String,String> entry:report.getSummaryMetrics().entrySet()) {
-    	    if (NumberUtils.isNumber(entry.getValue())) {
+        for (Map.Entry<String, String> entry : report.getSummaryMetrics().entrySet()) {
+            if (NumberUtils.isNumber(entry.getValue())) {
                 builder.append("<li>");
                 builder.append(entry.getKey());
                 builder.append(" : ");
@@ -57,7 +57,7 @@ public class SourceMonitorSummary {
                 }
                 builder.append("</li>");
             }
-    	}
+        }
         return builder.toString();
     }
 

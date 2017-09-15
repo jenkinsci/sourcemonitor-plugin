@@ -23,6 +23,7 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import com.thoughtworks.xstream.mapper.Mapper;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jdk.nashorn.internal.objects.annotations.Function;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -91,6 +93,9 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 		    metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
         }
 
+
+        ArrayList<FunctionStats> detailedMetrics = new ArrayList<FunctionStats>();
+
 		// Parse Summary checkpoint data.
         Element checkpoints = projectElt.getChild("checkpoints");
         List<?> checkpointsEltList = checkpoints.getChildren();
@@ -98,13 +103,26 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             Element checkpoint = (Element)checkpointsEltList.get(i);
             Element metricsElt = checkpoint.getChild("metrics");
             List<?> metricsEltList = metricsElt.getChildren();
+            Element functionMetrics = checkpoint.getChild("function_metrics");
+            List<?> functionMetricsEltList = functionMetrics.getChildren("function");
+
             for (int j = 0; j < metricsEltList.size(); j++) {
                 Element metricElt = (Element)metricsEltList.get(j);
                 metricsSummaryMap.put(metricNameMap.get(metricElt.getAttributeValue("id")), metricElt.getValue());
             }
+            int numFunctions = Integer.parseInt(functionMetrics.getAttributeValue("function_count"));
+            for (int k = 0; k < numFunctions; k++){
+                Element function = (Element) functionMetricsEltList.get(k);
+                int complexity = Integer.parseInt(function.getChild("complexity").getValue());
+                int statements = Integer.parseInt(function.getChild("statements").getValue());
+                String name = function.getAttributeValue("name");
+                FunctionStats functionDetails = new FunctionStats(complexity, statements, name);
+                detailedMetrics.add(functionDetails);
+            }
         }
 
 		sourceMonitorReport.setSummaryMetrics(metricsSummaryMap);
+        sourceMonitorReport.setDetailedMetrics(detailedMetrics);
 
         // Set the parameters for the health metrics.
         sourceMonitorReport.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);

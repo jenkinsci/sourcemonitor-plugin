@@ -49,7 +49,19 @@ public class SourceMonitorResult implements Serializable {
         return owner;
     }
 
-
+    public String getDetailedMetrics(){
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<report.getDetailedMetrics().size();i++){
+            builder.append("<tr><td>");
+            builder.append(report.getDetailedMetrics().get(i).getFunction());
+            builder.append("</td><td>");
+            builder.append(report.getDetailedMetrics().get(i).getComplexity());
+            builder.append("</td><td>");
+            builder.append(report.getDetailedMetrics().get(i).getStatements());
+            builder.append("</td></tr>");
+        }
+        return builder.toString();
+    }
 
     private static class BreadCrumbResult extends SourceMonitorResult implements ModelObject {
         private static final long serialVersionUID = 1L;
