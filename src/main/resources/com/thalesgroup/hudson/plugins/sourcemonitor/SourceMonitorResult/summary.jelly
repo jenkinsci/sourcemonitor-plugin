@@ -42,11 +42,11 @@
         text-align: left;
         margin-bottom: 8px;
         margin-top: 15px;
-        font-size: 175%;
+        font-size: 160%;
         font-weight: bold;
         }
     </style>
-    <table style="width:50%" class="pane sortable" id="files">
+    <table width = "100" class="pane sortable" id="files">
         <caption>Repo Summary</caption>
         <tr>
             <th>Metric</th>
@@ -55,13 +55,13 @@
         <tbody>
             <j:forEach var="metric" items="${it.report.summaryMetrics}">
                 <tr>
-                    <td class="pane">${metric.key}</td>
-                    <td class="pane">${metric.value}</td>
+                    <td width = "50" class="pane">${metric.key}</td>
+                    <td width = "50" class="pane">${metric.value}</td>
                 </tr>
             </j:forEach>
         </tbody>
     </table>
-    <table style="width:75%" class="pane sortable" id="files">
+    <table style="width:50%" class="pane sortable" id="files">
         <caption>Function Metrics</caption>
         <tr>
             <th>Function</th>
