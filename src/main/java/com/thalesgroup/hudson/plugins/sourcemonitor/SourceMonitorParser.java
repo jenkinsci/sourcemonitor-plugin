@@ -81,24 +81,15 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 		
 		Map<String, String> metricsSummaryMap = new HashMap<String, String>();
 		Map<String, String> metricNameMap = new HashMap<String, String>();
-		
-		Element root = document.getRootElement();
-		Element projectElt = root.getChild("project");
+        ArrayList<FunctionStats> detailedMetrics = new ArrayList<FunctionStats>();
 
-		// Parse the Metric Names.
-		Element metricNames = projectElt.getChild("metric_names");
-		List<?> metricNamesEltList = metricNames.getChildren();
+		List<?> metricNamesEltList = getMetricNamesList(document);
 		for (int i = 0; i < metricNamesEltList.size(); i++) {
 		    Element metricNameElt = (Element)metricNamesEltList.get(i);
 		    metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
         }
 
-
-        ArrayList<FunctionStats> detailedMetrics = new ArrayList<FunctionStats>();
-
-		// Parse Summary checkpoint data.
-        Element checkpoints = projectElt.getChild("checkpoints");
-        List<?> checkpointsEltList = checkpoints.getChildren();
+        List<?> checkpointsEltList = getCheckpointsList(document);
         for (int i = 0; i < checkpointsEltList.size(); i++) {
             Element checkpoint = (Element)checkpointsEltList.get(i);
             Element metricsElt = checkpoint.getChild("metrics");
@@ -111,19 +102,22 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
                 metricsSummaryMap.put(metricNameMap.get(metricElt.getAttributeValue("id")), metricElt.getValue());
             }
             int numFunctions = Integer.parseInt(functionMetrics.getAttributeValue("function_count"));
+
             for (int k = 0; k < numFunctions; k++){
-                Element function = (Element) functionMetricsEltList.get(k);
-                int complexity = Integer.parseInt(function.getChild("complexity").getValue());
-                int statements = Integer.parseInt(function.getChild("statements").getValue());
-                String name = function.getAttributeValue("name");
-                FunctionStats functionDetails = new FunctionStats(complexity, statements, name);
-                detailedMetrics.add(functionDetails);
+                detailedMetrics.add(getFunctionStats((Element)functionMetricsEltList.get(k)));
             }
         }
 
 		sourceMonitorReport.setSummaryMetrics(metricsSummaryMap);
         sourceMonitorReport.setDetailedMetrics(detailedMetrics);
 
+        setHealthParameters(sourceMonitorReport);
+
+		return sourceMonitorReport;
+	}
+
+	private void setHealthParameters(SourceMonitorReport sourceMonitorReport)
+    {
         // Set the parameters for the health metrics.
         sourceMonitorReport.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);
         sourceMonitorReport.setAverageComplexityThresholdMinimum(averageComplexityThresholdMinimum);
@@ -131,9 +125,36 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         sourceMonitorReport.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
         sourceMonitorReport.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
         sourceMonitorReport.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
+    }
 
-		return sourceMonitorReport;
-	}
+    private FunctionStats getFunctionStats(Element function){
+        int complexity = Integer.parseInt(function.getChild("complexity").getValue());
+        int statements = Integer.parseInt(function.getChild("statements").getValue());
+        String name = function.getAttributeValue("name");
+        FunctionStats functionDetails = new FunctionStats(complexity, statements, name);
+
+        return functionDetails;
+    }
+
+    private List<?> getMetricNamesList(Document document){
+        Element root = document.getRootElement();
+        Element projectElt = root.getChild("project");
+
+        // Parse the Metric Names.
+        Element metricNames = projectElt.getChild("metric_names");
+        List<?> metricNamesList = metricNames.getChildren();
+        return metricNamesList;
+    }
+
+    private List<?> getCheckpointsList(Document document){
+        Element root = document.getRootElement();
+        Element projectElt = root.getChild("project");
+        // Parse Summary checkpoint data.
+        Element checkpoints = projectElt.getChild("checkpoints");
+        List<?> checkpointsList = checkpoints.getChildren();
+
+        return checkpointsList;
+    }
 
 	public FilePath getResultFilePath() {
 		return resultFilePath;
