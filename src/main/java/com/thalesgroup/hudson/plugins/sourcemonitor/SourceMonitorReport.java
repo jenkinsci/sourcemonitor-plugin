@@ -56,8 +56,17 @@ public class SourceMonitorReport implements Serializable {
             .build();
     private List<Map<String,String>> checkpoints;
     private Map<String, String> summaryMetrics;
+    private ArrayList<FunctionStats> detailedMetrics;
 
-	public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
+    public ArrayList<FunctionStats> getDetailedMetrics() {
+        return detailedMetrics;
+    }
+
+    public void setDetailedMetrics(ArrayList<FunctionStats> detailedMetrics) {
+        this.detailedMetrics = detailedMetrics;
+    }
+
+    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
 		this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
 	}
 
