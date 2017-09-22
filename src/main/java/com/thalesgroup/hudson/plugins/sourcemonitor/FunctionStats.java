@@ -2,6 +2,7 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 import java.io.Serializable;
 
+// serializable required for multibranch pipeline
 public class FunctionStats implements Serializable {
     private int complexity;
     private int statements;
