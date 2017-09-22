@@ -80,17 +80,17 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         }
 
         Map<String, String> metricsSummaryMap = new HashMap<String, String>();
-        Map<String, String> metricNameMap = new HashMap<String, String>();
         ArrayList<FunctionStats> detailedMetrics = new ArrayList<FunctionStats>();
 
         Element projectElt = getProject(document);
-        setMetricNamesList(projectElt, metricNameMap);
+
+        Map<String, String> metricNameMap = buildMetricNameMap(projectElt);
 
         List<?> checkpointsEltList = getCheckpointsList(projectElt);
         for (int i = 0; i < checkpointsEltList.size(); i++) {
             Element checkpoint = (Element) checkpointsEltList.get(i);
-            setSummaryMap(checkpoint, metricsSummaryMap, metricNameMap);
-            setDetailList(checkpoint, detailedMetrics);
+            populateSummaryMap(checkpoint, metricsSummaryMap, metricNameMap);
+            populateDetailList(checkpoint, detailedMetrics);
         }
 
         sourceMonitorReport.setSummaryMetrics(metricsSummaryMap);
@@ -124,7 +124,9 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         return root.getChild("project");
     }
 
-    private void setMetricNamesList(Element project, Map<String, String> metricNameMap) {
+    private Map<String,String> buildMetricNameMap(Element project) {
+        Map<String,String> metricNameMap = new HashMap<String, String>();
+
         // Parse the Metric Names.
         Element metricNames = project.getChild("metric_names");
         List<?> metricNamesEltList = metricNames.getChildren();
@@ -132,6 +134,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             Element metricNameElt = (Element) metricNamesEltList.get(i);
             metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
         }
+
+        return metricNameMap;
     }
 
     private List<?> getCheckpointsList(Element project) {
@@ -140,7 +144,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         return checkpointsList;
     }
 
-    private void setSummaryMap(Element checkpoint, Map<String, String> metricsSummaryMap, Map<String, String> metricNameMap) {
+    private void populateSummaryMap(Element checkpoint, Map<String, String> metricsSummaryMap, Map<String, String> metricNameMap) {
         Element metricsElt = checkpoint.getChild("metrics");
         List<?> metricsEltList = metricsElt.getChildren();
         for (int i = 0; i < metricsEltList.size(); i++) {
@@ -149,7 +153,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         }
     }
 
-    private void setDetailList(Element checkpoint, List<FunctionStats> detailedMetrics) {
+    private void populateDetailList(Element checkpoint, List<FunctionStats> detailedMetrics) {
         Element functionMetrics = checkpoint.getChild("function_metrics");
         List<?> functionMetricsEltList = functionMetrics.getChildren("function");
         int numFunctions = Integer.parseInt(functionMetrics.getAttributeValue("function_count"));
