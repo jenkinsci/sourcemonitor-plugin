@@ -38,6 +38,10 @@ public class SourceMonitorReport implements Serializable {
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
+    private List<Map<String,String>> checkpoints;
+    private Map<String, String> summaryMetrics;
+    private ArrayList<FunctionStats> detailedMetrics = null;
+    private ArrayList<FileStats> detailsFileOutput = null;
 
     private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
             .put("M0", "Lines")
@@ -54,9 +58,6 @@ public class SourceMonitorReport implements Serializable {
             .put("M11", "Average Block Depth")
             .put("M12", "Average Complexity")
             .build();
-    private List<Map<String,String>> checkpoints;
-    private Map<String, String> summaryMetrics;
-    private ArrayList<FunctionStats> detailedMetrics;
 
     public ArrayList<FunctionStats> getDetailedMetrics() {
         return detailedMetrics;
@@ -122,6 +123,14 @@ public class SourceMonitorReport implements Serializable {
         }
 
         return summaryMetrics;
+    }
+
+    public ArrayList<FileStats> getDetailsFileOutput() {
+        return detailsFileOutput;
+    }
+
+    public void setDetailsFileOutput(ArrayList<FileStats> detailsFileOutput) {
+        this.detailsFileOutput = detailsFileOutput;
     }
 
     private Map<String, String> buildSummaryMetricsFromCheckpoints() {

@@ -46,37 +46,60 @@
         font-weight: bold;
         }
     </style>
-    <table style="width:50%" class="pane sortable" id="files">
-        <caption>Repo Summary</caption>
-        <col style="width:30%"></col>
-        <col style="width:20%"></col>
-        <tr>
-            <th>Metric</th>
-            <th>Value</th>
-        </tr>
-        <tbody>
-            <j:forEach var="metric" items="${it.report.summaryMetrics}">
+    <!-- when/otherwise equivalent to if/else -->
+    <j:choose>
+        <!-- when the details file was parsed, display that -->
+        <j:when test="${!empty(it.report.detailsFileOutput)}">
+            <table class="pane sortable" id="files">
+                <caption>Repo Files Summary</caption>
                 <tr>
-                    <td width="50" class="pane">${metric.key}</td>
-                    <td width="50" class="pane">${metric.value}</td>
+                    <th>File Name</th>
+                    <th># of Functions</th>
+                    <th># of Statements</th>
+                    <th>Max Complexity</th>
                 </tr>
-            </j:forEach>
-        </tbody>
-    </table>
-    <j:if test="${!empty(it.report.detailedMetrics)}">
-        <table style="width:50%" class="pane sortable" id="files">
-            <caption>Function Metrics</caption>
-            <col style="width:25%"></col>
-            <col style="width:15%"></col>
-            <col style="width:10%"></col>
-            <tr>
-                <th>Function</th>
-                <th>Complexity</th>
-                <th>Statements</th>
-            </tr>
-            <tbody>
-                <j:out value="${it.detailedMetrics}"/>
-            </tbody>
-        </table>
-    </j:if>
+                <tbody>
+                    <j:out value="${it.detailsFileOutput}"/>
+                </tbody>
+            </table>
+        </j:when> <!-- end details file display -->
+
+        <!-- otherwise the summary file was parsed, display -->
+        <j:otherwise>
+            <table style="width:50%" class="pane sortable" id="files">
+                <caption>Repo Summary</caption>
+                <col style="width:30%"></col>
+                <col style="width:20%"></col>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                <tbody>
+                    <j:forEach var="metric" items="${it.report.summaryMetrics}">
+                        <tr>
+                            <td width="50" class="pane">${metric.key}</td>
+                            <td width="50" class="pane">${metric.value}</td>
+                        </tr>
+                    </j:forEach>
+                </tbody>
+            </table>
+            <!-- for backwards compatibility, only display detailed metrics if exists -->
+            <j:if test="${!empty(it.report.detailedMetrics)}">
+                <table style="width:50%" class="pane sortable" id="files">
+                    <caption>Function Metrics</caption>
+                    <col style="width:25%"></col>
+                    <col style="width:15%"></col>
+                    <col style="width:10%"></col>
+                    <tr>
+                        <th>Function</th>
+                        <th>Complexity</th>
+                        <th>Statements</th>
+                    </tr>
+                    <tbody>
+                        <j:out value="${it.detailedMetrics}"/>
+                    </tbody>
+                </table>
+            </j:if>
+        </j:otherwise> <!-- end summary file display -->
+    </j:choose>
 </j:jelly>

@@ -40,6 +40,7 @@ import java.util.Set;
 
 public class SourceMonitorStep extends Step {
     private String summaryFilePath;
+    private String detailsFilePath;
     private int maxComplexityThresholdMaximum = 0;
     private int maxComplexityThresholdMinimum = 0;
     private double averageComplexityThresholdMaximum = 0;
@@ -48,7 +49,17 @@ public class SourceMonitorStep extends Step {
     private int commentCoverageThresholdMinimum = 0;
 
     @DataBoundConstructor
-    public SourceMonitorStep(String summaryFilePath){
+    public SourceMonitorStep(){
+
+    }
+
+    @DataBoundSetter
+    public void setDetailsFilePath(String detailsFilePath) {
+        this.detailsFilePath = detailsFilePath;
+    }
+
+    @DataBoundSetter
+    public void setSummaryFilePath(String summaryFilePath) {
         this.summaryFilePath = summaryFilePath;
     }
 
@@ -104,6 +115,10 @@ public class SourceMonitorStep extends Step {
         return commentCoverageThresholdMinimum;
     }
 
+    public String getDetailsFilePath() {
+        return detailsFilePath;
+    }
+
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
         return new SourceMonitorStepExecution(this, stepContext);
@@ -127,9 +142,9 @@ public class SourceMonitorStep extends Step {
             return "Source Monitor Parser";
         }
 
-        public FormValidation doCheckSummaryFilePath(@QueryParameter String value) {
-            if (value.isEmpty()) {
-                return FormValidation.error("A valid file/path is required.");
+        public FormValidation doCheckSummaryFilePath(@QueryParameter String value, @QueryParameter String detailsFilePath) {
+            if (value.isEmpty() && detailsFilePath.isEmpty()) {
+                return FormValidation.error("A valid file/path is required in either the details or summary field.");
             }
             return FormValidation.ok();
         }

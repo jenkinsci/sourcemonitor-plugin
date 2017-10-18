@@ -29,6 +29,9 @@
 	<f:entry title="${%SourceMonitor summary metric file path}">
 		<f:textbox name="summaryFilePath" value="${instance.summaryFilePath}"/>
 	</f:entry>
+	<f:entry title="${%SourceMonitor detailed metric file path}">
+		<f:textbox name="detailsFilePath" value="${instance.detailsFilePath}"/>
+	</f:entry>
 	<f:entry title="${%Max complexity maximum threshold}">
 		<f:textbox name="maxComplexityThresholdMaximum" value="${instance.maxComplexityThresholdMaximum}"/>
 	</f:entry>

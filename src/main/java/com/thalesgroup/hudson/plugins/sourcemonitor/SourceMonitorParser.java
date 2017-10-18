@@ -54,26 +54,78 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
-    private FilePath resultFilePath;
+    private final FilePath summaryFilePath;
+    private final FilePath detailsFilePath;
     private static final Logger LOGGER = Logger.getLogger(SourceMonitorParser.class.getName());
 
-    public SourceMonitorParser() {
-        resultFilePath = null;
+    public SourceMonitorParser(FilePath summaryFilePath) {
+        this.summaryFilePath = summaryFilePath;
+        this.detailsFilePath = null;
     }
 
-    public SourceMonitorParser(FilePath resultFilePath) {
-        this.resultFilePath = resultFilePath;
+    public SourceMonitorParser(){
+        this.summaryFilePath = null;
+        this.detailsFilePath = null;
+    }
+
+    public SourceMonitorParser(FilePath summaryFilePath, FilePath detailsFilePath){
+        this.summaryFilePath = summaryFilePath;
+        this.detailsFilePath = detailsFilePath;
     }
 
     public SourceMonitorReport invoke(java.io.File workspace, VirtualChannel channel) throws IOException {
 
         SourceMonitorReport sourceMonitorReport = new SourceMonitorReport();
 
+        if (detailsFilePath != null){
+            parseDetailsFile(sourceMonitorReport);
+        }
+
+        parseSummaryFile(sourceMonitorReport);
+        setHealthParameters(sourceMonitorReport);
+
+        return sourceMonitorReport;
+    }
+
+    /** Parsing Helper Methods */
+
+    private void parseDetailsFile(SourceMonitorReport sourceMonitorReport) throws IOException{
         Document document;
 
         try {
             SAXBuilder sxb = new SAXBuilder();
-            document = sxb.build(new InputStreamReader(new FileInputStream(new File(resultFilePath.toURI())), "UTF-8"));
+            document = sxb.build(new InputStreamReader(new FileInputStream(new File(detailsFilePath.toURI())), "UTF-8"));
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Parsing file error :" + e.toString());
+            throw new AbortException("Parsing file error");
+        }
+
+        ArrayList<FileStats> detailsFileOutput = new ArrayList<FileStats>();
+
+        Element projectElt = getProject(document);
+        List<?> checkpointsEltList = getCheckpointsList(projectElt);
+
+        for (int i = 0; i < checkpointsEltList.size(); i++) {
+            Element checkpoint = (Element) checkpointsEltList.get(i);
+            Element files = checkpoint.getChild("files");
+            List<?> fileEltList = files.getChildren("file");
+
+            int numFiles = Integer.parseInt(files.getAttributeValue("file_count"));
+
+            for (int j = 0; j < numFiles; j++) {
+                detailsFileOutput.add(getFileStats((Element) fileEltList.get(j)));
+            }
+        }
+
+        sourceMonitorReport.setDetailsFileOutput(detailsFileOutput);
+    }
+
+    private void parseSummaryFile(SourceMonitorReport sourceMonitorReport) throws IOException{
+        Document document;
+
+        try {
+            SAXBuilder sxb2 = new SAXBuilder();
+            document = sxb2.build(new InputStreamReader(new FileInputStream(new File(summaryFilePath.toURI())), "UTF-8"));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Parsing file error :" + e.toString());
             throw new AbortException("Parsing file error");
@@ -95,9 +147,6 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
         sourceMonitorReport.setSummaryMetrics(metricsSummaryMap);
         sourceMonitorReport.setDetailedMetrics(detailedMetrics);
-        setHealthParameters(sourceMonitorReport);
-
-        return sourceMonitorReport;
     }
 
     private void setHealthParameters(SourceMonitorReport sourceMonitorReport) {
@@ -108,6 +157,37 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         sourceMonitorReport.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
         sourceMonitorReport.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
         sourceMonitorReport.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
+    }
+
+    private FileStats getFileStats(Element fileElt){
+        FileStats newFile = new FileStats();
+
+        newFile.setFileName(fileElt.getAttributeValue("file_name"));
+
+        Element metricsElt = fileElt.getChild("metrics");
+        List<?>  metricEltList = metricsElt.getChildren("metric");
+
+        // 9th metric is max complexity
+        Element metricElt = (Element)metricEltList.get(8);
+        newFile.setMaxComplexity(Integer.parseInt(metricElt.getValue()));
+
+        // 2nd metric is number of statements
+        metricElt = (Element)metricEltList.get(1);
+        newFile.setNumStatements(Integer.parseInt(metricElt.getValue()));
+
+        // 5th metric is number of functions
+        metricElt = (Element)metricEltList.get(4);
+        newFile.setNumFunctions(Integer.parseInt(metricElt.getValue()));
+
+        Element functionMetrics = fileElt.getChild("function_metrics");
+        List<?> functionEltList = functionMetrics.getChildren("function");
+
+        for (int i=0; i<functionEltList.size(); i++){
+            Element function = (Element)functionEltList.get(i);
+            newFile.addFunction(getFunctionStats(function));
+        }
+
+        return newFile;
     }
 
     private FunctionStats getFunctionStats(Element function) {
@@ -163,12 +243,14 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         }
     }
 
-    public FilePath getResultFilePath() {
-        return resultFilePath;
+    /** Getters and Setters */
+
+    public FilePath getSummaryFilePath() {
+        return summaryFilePath;
     }
 
-    public void setResultFilePath(FilePath resultFilePath) {
-        this.resultFilePath = resultFilePath;
+    public FilePath getDetailsFilePath() {
+        return detailsFilePath;
     }
 
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {

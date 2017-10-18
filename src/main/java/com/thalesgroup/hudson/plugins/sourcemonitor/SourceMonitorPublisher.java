@@ -43,7 +43,8 @@ import javax.annotation.Nonnull;
 public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep {
     private static final long serialVersionUID = 1L;
 
-    private final String summaryFilePath;
+    private String summaryFilePath = null;
+    private String detailsFilePath = null;
     private int maxComplexityThresholdMaximum = 0;
     private int maxComplexityThresholdMinimum = 0;
     private double averageComplexityThresholdMaximum = 0;
@@ -52,8 +53,9 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     private int commentCoverageThresholdMinimum = 0;
 
     @DataBoundConstructor
-    public SourceMonitorPublisher(String summaryFilePath){
+    public SourceMonitorPublisher(String summaryFilePath, String detailsFilePath){
         this.summaryFilePath = summaryFilePath;
+        this.detailsFilePath = detailsFilePath;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -68,7 +70,7 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
 		return summaryFilePath;
 	}
 
-	@DataBoundSetter
+    @DataBoundSetter
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
         this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
     }
@@ -103,9 +105,16 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
         if(this.canContinue(run.getResult())){
 
             listener.getLogger().println("Parsing sourcemonitor results");
+            SourceMonitorParser parser;
 
             PrintStream logger = listener.getLogger();
-            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath));
+            if (detailsFilePath != null) {
+                parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath), new FilePath(filePath, detailsFilePath));
+            }
+            else{
+                parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath));
+            }
+
 
             // Set the parameters for the health metrics.
             parser.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);

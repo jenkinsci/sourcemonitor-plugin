@@ -63,6 +63,22 @@ public class SourceMonitorResult implements Serializable {
         return builder.toString();
     }
 
+    public String getDetailsFileOutput(){
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<report.getDetailsFileOutput().size();i++){
+            builder.append("<tr><td>");
+            builder.append(report.getDetailsFileOutput().get(i).getFileName());
+            builder.append("</td><td>");
+            builder.append(report.getDetailsFileOutput().get(i).getNumFunctions());
+            builder.append("</td><td>");
+            builder.append(report.getDetailsFileOutput().get(i).getNumStatements());
+            builder.append("</td><td>");
+            builder.append(report.getDetailsFileOutput().get(i).getMaxComplexity());
+            builder.append("</td></tr>");
+        }
+        return builder.toString();
+    }
+
     private static class BreadCrumbResult extends SourceMonitorResult implements ModelObject {
         private static final long serialVersionUID = 1L;
 
