@@ -113,7 +113,10 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             int numFiles = Integer.parseInt(files.getAttributeValue("file_count"));
 
             for (int j = 0; j < numFiles; j++) {
-                detailsFileOutput.add(getFileStats((Element) fileEltList.get(j)));
+                FileStats newFile = getFileStats((Element) fileEltList.get(j));
+                if (newFile != null){
+                    detailsFileOutput.add(newFile);
+                }
             }
         }
 
@@ -164,7 +167,23 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
         newFile.setFileName(fileElt.getAttributeValue("file_name"));
 
+        Element functionMetricsElt = fileElt.getChild("function_metrics");
         Element metricsElt = fileElt.getChild("metrics");
+
+        populateFileMetrics(newFile, metricsElt);
+
+        if (newFile.getNumFunctions() != 0){
+            populateFileFunctions(newFile, functionMetricsElt);
+        }
+        else{
+            newFile = null;
+        }
+
+        return newFile;
+    }
+
+    private void populateFileMetrics(FileStats newFile, Element metricsElt){
+
         List<?>  metricEltList = metricsElt.getChildren("metric");
 
         // 9th metric is max complexity
@@ -178,16 +197,16 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         // 5th metric is number of functions
         metricElt = (Element)metricEltList.get(4);
         newFile.setNumFunctions(Integer.parseInt(metricElt.getValue()));
+    }
 
-        Element functionMetrics = fileElt.getChild("function_metrics");
-        List<?> functionEltList = functionMetrics.getChildren("function");
+    private void populateFileFunctions(FileStats newFile, Element functionMetricsElt){
+
+        List<?> functionEltList = functionMetricsElt.getChildren("function");
 
         for (int i=0; i<functionEltList.size(); i++){
             Element function = (Element)functionEltList.get(i);
             newFile.addFunction(getFunctionStats(function));
         }
-
-        return newFile;
     }
 
     private FunctionStats getFunctionStats(Element function) {

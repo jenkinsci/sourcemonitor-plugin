@@ -55,4 +55,18 @@ public class FileStats implements Serializable {
     public void setMaxComplexity(int maxComplexity) {
         this.maxComplexity = maxComplexity;
     }
+
+    public String getFunctionOutput(){
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<functionStats.size();i++){
+            builder.append("<tr><td>");
+            builder.append(functionStats.get(i).getFunction());
+            builder.append("</td><td>");
+            builder.append(functionStats.get(i).getComplexity());
+            builder.append("</td><td>");
+            builder.append(functionStats.get(i).getStatements());
+            builder.append("</td></tr>");
+        }
+        return builder.toString();
+    }
 }

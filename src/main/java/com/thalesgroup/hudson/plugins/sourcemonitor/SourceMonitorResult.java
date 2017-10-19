@@ -66,9 +66,10 @@ public class SourceMonitorResult implements Serializable {
     public String getDetailsFileOutput(){
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<report.getDetailsFileOutput().size();i++){
-            builder.append("<tr><td>");
+            String str1 = "<tr><td><a href = \"#ref"+i+"\">";
+            builder.append(str1);
             builder.append(report.getDetailsFileOutput().get(i).getFileName());
-            builder.append("</td><td>");
+            builder.append("</a></td><td>");
             builder.append(report.getDetailsFileOutput().get(i).getNumFunctions());
             builder.append("</td><td>");
             builder.append(report.getDetailsFileOutput().get(i).getNumStatements());
