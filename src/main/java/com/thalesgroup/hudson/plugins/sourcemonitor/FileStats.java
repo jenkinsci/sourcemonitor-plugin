@@ -10,18 +10,31 @@ public class FileStats implements Serializable {
     private int numFunctions;
     private int numStatements;
     private int maxComplexity;
+    private int maxStatements;
+    private SourceMonitorReport report;
     private ArrayList<FunctionStats> functionStats;
 
-    public FileStats() {
+
+    public FileStats(SourceMonitorReport report) {
         functionStats = new ArrayList<FunctionStats>();
+        maxStatements = 0;
+        this.report = report;
     }
 
     public void addFunction(FunctionStats newFunction){
+        int statements = newFunction.getStatements();
+        if (statements > this.maxStatements){
+            this.maxStatements = statements;
+        }
         functionStats.add(newFunction);
     }
 
     public ArrayList<FunctionStats> getFunctionStats() {
         return functionStats;
+    }
+
+    public int getMaxStatements() {
+        return maxStatements;
     }
 
     public String getFileName() {
@@ -61,12 +74,44 @@ public class FileStats implements Serializable {
         for (int i=0; i<functionStats.size();i++){
             builder.append("<tr><td>");
             builder.append(functionStats.get(i).getFunction());
-            builder.append("</td><td>");
-            builder.append(functionStats.get(i).getComplexity());
-            builder.append("</td><td>");
-            builder.append(functionStats.get(i).getStatements());
+            builder.append("</td>");
+            String str1;
+
+            int numState = functionStats.get(i).getStatements();
+            int paramHealth = report.getStateHealth(numState);
+
+            if (paramHealth >= 80){
+                str1 = "<td style=\"color:darkgreen\">"+numState;
+                builder.append(str1);
+            }
+            else if (paramHealth >= 60){
+                str1 = "<td style=\"color:darkorange\">"+numState;
+                builder.append(str1);
+            }
+            else{
+                str1 = "<td style=\"color:red;font-weight:bold\">"+numState;
+                builder.append(str1);
+            }
+            builder.append("</td>");
+
+            int maxComp = functionStats.get(i).getComplexity();
+            paramHealth = report.getCompHealth(maxComp);
+            if (paramHealth >= 80){
+                str1 = "<td style=\"color:darkgreen\">"+maxComp;
+                builder.append(str1);
+            }
+            else if (paramHealth >= 60){
+                str1 = "<td style=\"color:darkorange\">"+maxComp;
+                builder.append(str1);
+            }
+            else{
+                str1 = "<td style=\"color:red;font-weight:bold\">"+maxComp;
+                builder.append(str1);
+            }
+            builder.append("</td>");
             builder.append("</td></tr>");
         }
         return builder.toString();
     }
+
 }

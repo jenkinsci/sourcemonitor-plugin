@@ -4,25 +4,24 @@
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
          xmlns:i="jelly:fmt" xmlns:local="local">
     <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
-    <h1> File Details</h1>
-
-    <j:forEach var="jvar_file" items ="${it.report.detailsFileOutput}" varStatus="loop">
-        <a name="ref${loop.index}"></a>
-        <table style="width:50%" class="pane sortable" id="files">
-            <caption>
-                ${jvar_file.fileName}
-            </caption>
-            <col style="width:40%"></col>
-            <col style="width:8%"></col>
-            <col style="width:8%"></col>
-            <tr>
-                <th>Function</th>
-                <th>Complexity</th>
-                <th>Statements</th>
-            </tr>
-            <tbody>
-                <j:out value="${jvar_file.functionOutput}"/>
-            </tbody>
-        </table>
-    </j:forEach>
+        <h1> File Details</h1>
+        <j:forEach var="jvar_file" items ="${it.report.detailsFileOutput}" varStatus="loop">
+            <a name="ref${loop.index}"></a>
+            <table style="width:50%" class="pane sortable" id="files">
+                <caption>
+                    ${jvar_file.fileName}
+                </caption>
+                <col style="width:40%"></col>
+                <col style="width:8%"></col>
+                <col style="width:8%"></col>
+                <tr>
+                    <th>Function</th>
+                    <th># of Statements</th>
+                    <th>Complexity</th>
+                </tr>
+                <tbody>
+                    <j:out value="${jvar_file.functionOutput}"/>
+                </tbody>
+            </table>
+        </j:forEach>
 </j:jelly>

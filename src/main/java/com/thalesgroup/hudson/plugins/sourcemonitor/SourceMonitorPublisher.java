@@ -51,6 +51,8 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
 
     @DataBoundConstructor
     public SourceMonitorPublisher(String summaryFilePath, String detailsFilePath){
@@ -73,6 +75,16 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     @DataBoundSetter
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
         this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum= maxStatementsThresholdMaximum;
     }
 
     @DataBoundSetter
@@ -123,6 +135,8 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
             parser.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
             parser.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
             parser.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
+            parser.setMaxStatementsThresholdMaximum(maxStatementsThresholdMaximum);
+            parser.setMaxStatementsThresholdMinimum(maxStatementsThresholdMinimum);
 
             SourceMonitorReport report;
             try{

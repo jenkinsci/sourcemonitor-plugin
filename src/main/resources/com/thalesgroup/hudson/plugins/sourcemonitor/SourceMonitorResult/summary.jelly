@@ -77,10 +77,12 @@
                 <col style="width:8%"></col>
                 <col style="width:8%"></col>
                 <col style="width:8%"></col>
+                <col style="width:8%"></col>
                 <tr>
                     <th>File Name</th>
                     <th># of Functions</th>
                     <th># of Statements</th>
+                    <th>Max Statements</th>
                     <th>Max Complexity</th>
                 </tr>
                 <tbody>

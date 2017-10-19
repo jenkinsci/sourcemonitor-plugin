@@ -57,6 +57,8 @@ public class SourceMonitorStepExecution extends SynchronousNonBlockingStepExecut
         publisher.setCommentCoverageThresholdMinimum(step.getCommentCoverageThresholdMinimum());
         publisher.setMaxComplexityThresholdMaximum(step.getMaxComplexityThresholdMaximum());
         publisher.setMaxComplexityThresholdMinimum(step.getMaxComplexityThresholdMinimum());
+        publisher.setMaxStatementsThresholdMaximum(step.getMaxStatementsThresholdMaximum());
+        publisher.setMaxStatementsThresholdMinimum(step.getMaxStatementsThresholdMinimum());
 
         publisher.perform(build, ws, launcher, listener);
 

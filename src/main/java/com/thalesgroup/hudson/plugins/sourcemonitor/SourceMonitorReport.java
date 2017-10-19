@@ -38,6 +38,8 @@ public class SourceMonitorReport implements Serializable {
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
     private List<Map<String,String>> checkpoints;
     private Map<String, String> summaryMetrics;
     private ArrayList<FunctionStats> detailedMetrics = null;
@@ -70,6 +72,22 @@ public class SourceMonitorReport implements Serializable {
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
 		this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
 	}
+
+    public int getMaxStatementsThresholdMaximum() {
+        return maxStatementsThresholdMaximum;
+    }
+
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum = maxStatementsThresholdMaximum;
+    }
+
+    public int getMaxStatementsThresholdMinimum() {
+        return maxStatementsThresholdMinimum;
+    }
+
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
 
     public int getMaxComplexityThresholdMaximum() { return maxComplexityThresholdMaximum; }
 
@@ -148,5 +166,39 @@ public class SourceMonitorReport implements Serializable {
         }
 
         return summaryMetrics;
+    }
+
+    public int getCompHealth(int maxComp){
+        int max = maxComplexityThresholdMaximum;
+        int min = maxComplexityThresholdMinimum;
+        int paramHealth = 0;
+
+        if (maxComp < min){
+            paramHealth = 100;
+        }
+        else if (maxComp > max){
+            paramHealth = 0;
+        }
+        else{
+            paramHealth = (max-maxComp)*100/(max - min);
+        }
+        return paramHealth;
+    }
+
+    public int getStateHealth(int maxState){
+        int max = maxStatementsThresholdMaximum;
+        int min = maxStatementsThresholdMinimum;
+        int paramHealth = 0;
+
+        if (maxState < min){
+            paramHealth = 100;
+        }
+        else if (maxState > max){
+            paramHealth = 0;
+        }
+        else{
+            paramHealth = (max-maxState)*100/(max - min);
+        }
+        return paramHealth;
     }
 }

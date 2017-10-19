@@ -47,10 +47,22 @@ public class SourceMonitorStep extends Step {
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
 
     @DataBoundConstructor
     public SourceMonitorStep(){
 
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum= maxStatementsThresholdMaximum;
     }
 
     @DataBoundSetter
@@ -113,6 +125,14 @@ public class SourceMonitorStep extends Step {
     }
     public int getCommentCoverageThresholdMinimum() {
         return commentCoverageThresholdMinimum;
+    }
+
+    public int getMaxStatementsThresholdMaximum() {
+        return maxStatementsThresholdMaximum;
+    }
+
+    public int getMaxStatementsThresholdMinimum() {
+        return maxStatementsThresholdMinimum;
     }
 
     public String getDetailsFilePath() {

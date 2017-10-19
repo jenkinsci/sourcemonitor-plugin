@@ -56,6 +56,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
     private int commentCoverageThresholdMinimum = 0;
     private final FilePath summaryFilePath;
     private final FilePath detailsFilePath;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
     private static final Logger LOGGER = Logger.getLogger(SourceMonitorParser.class.getName());
 
     public SourceMonitorParser(FilePath summaryFilePath) {
@@ -87,6 +89,14 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         return sourceMonitorReport;
     }
 
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum = maxStatementsThresholdMaximum;
+    }
+
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
+
     /** Parsing Helper Methods */
 
     private void parseDetailsFile(SourceMonitorReport sourceMonitorReport) throws IOException{
@@ -113,7 +123,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             int numFiles = Integer.parseInt(files.getAttributeValue("file_count"));
 
             for (int j = 0; j < numFiles; j++) {
-                FileStats newFile = getFileStats((Element) fileEltList.get(j));
+                FileStats newFile = getFileStats(sourceMonitorReport, (Element) fileEltList.get(j));
                 if (newFile != null){
                     detailsFileOutput.add(newFile);
                 }
@@ -160,10 +170,12 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         sourceMonitorReport.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
         sourceMonitorReport.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
         sourceMonitorReport.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
+        sourceMonitorReport.setMaxStatementsThresholdMaximum(maxStatementsThresholdMaximum);
+        sourceMonitorReport.setMaxStatementsThresholdMinimum(maxStatementsThresholdMinimum);
     }
 
-    private FileStats getFileStats(Element fileElt){
-        FileStats newFile = new FileStats();
+    private FileStats getFileStats(SourceMonitorReport report, Element fileElt){
+        FileStats newFile = new FileStats(report);
 
         newFile.setFileName(fileElt.getAttributeValue("file_name"));
 

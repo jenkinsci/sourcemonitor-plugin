@@ -73,8 +73,41 @@ public class SourceMonitorResult implements Serializable {
             builder.append(report.getDetailsFileOutput().get(i).getNumFunctions());
             builder.append("</td><td>");
             builder.append(report.getDetailsFileOutput().get(i).getNumStatements());
-            builder.append("</td><td>");
-            builder.append(report.getDetailsFileOutput().get(i).getMaxComplexity());
+            builder.append("</td>");
+
+            int maxState = report.getDetailsFileOutput().get(i).getMaxStatements();
+            int paramHealth = report.getStateHealth(maxState);
+
+            if (paramHealth > 80){
+                str1 = "<td style=\"color:darkgreen\">"+maxState;
+                builder.append(str1);
+            }
+            else if(paramHealth> 60){
+                str1 = "<td style=\"color:darkorange\">"+maxState;
+                builder.append(str1);
+            }
+            else {
+                str1 = "<td style=\"color:red;font-weight:bold\">" + maxState;
+                builder.append(str1);
+            }
+
+            builder.append("</td>");
+
+            int maxComp = report.getDetailsFileOutput().get(i).getMaxComplexity();
+            paramHealth = report.getCompHealth(maxComp);
+
+            if (paramHealth > 80){
+                str1 = "<td style=\"color:darkgreen\">"+maxComp;
+                builder.append(str1);
+            }
+            else if(paramHealth > 60){
+                str1 = "<td style=\"color:darkorange\">"+maxComp;
+                builder.append(str1);
+            }
+            else {
+                str1 = "<td style=\"color:red;font-weight:bold\">" + maxComp;
+                builder.append(str1);
+            }
             builder.append("</td></tr>");
         }
         return builder.toString();
