@@ -49,5 +49,11 @@
 	<f:entry field="commentCoverageThresholdMinimum" title="${%Comment coverage minimum threshold}">
 		<f:number default="0" min="0" step="1" size="10"/>
 	</f:entry>
+	<f:entry field ="maxStatementsThresholdMinimum" title="${%Max Statements minimum threshold}">
+		<f:number default="0" min="0" step="1" size="10"/>
+	</f:entry>
+	<f:entry field ="maxStatementsThresholdMaximum" title="${%Max Statements maximum threshold}">
+		<f:number default="0" min="0" step="1" size="10"/>
+	</f:entry>
 
 </j:jelly>
