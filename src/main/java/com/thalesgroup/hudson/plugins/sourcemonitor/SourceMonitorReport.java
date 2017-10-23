@@ -27,6 +27,8 @@ import com.google.common.collect.ImmutableMap;
 
 import java.io.Serializable;
 import java.util.*;
+import hudson.model.Run;
+import java.io.File;
 
 public class SourceMonitorReport implements Serializable {
 
@@ -44,6 +46,8 @@ public class SourceMonitorReport implements Serializable {
     private Map<String, String> summaryMetrics;
     private ArrayList<FunctionStats> detailedMetrics = null;
     private ArrayList<FileStats> detailsFileOutput = null;
+    private File parentFile;
+    private String sourceFilePath;
 
     private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
             .put("M0", "Lines")
@@ -60,6 +64,14 @@ public class SourceMonitorReport implements Serializable {
             .put("M11", "Average Block Depth")
             .put("M12", "Average Complexity")
             .build();
+
+    public File getParentFile() {
+        return parentFile;
+    }
+
+    public void setParentFile(File parentFile) {
+        this.parentFile = parentFile;
+    }
 
     public ArrayList<FunctionStats> getDetailedMetrics() {
         return detailedMetrics;
@@ -117,6 +129,14 @@ public class SourceMonitorReport implements Serializable {
 
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
+    }
+
+    public String getSourceFilePath() {
+        return sourceFilePath;
+    }
+
+    public void setSourceFilePath(String sourceFilePath) {
+        this.sourceFilePath = sourceFilePath;
     }
 
     public int getCommentCoverageThresholdMinimum() { return commentCoverageThresholdMinimum; }

@@ -1,5 +1,11 @@
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import hudson.model.Item;
+import hudson.model.Run;
+import hudson.util.TextFile;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -114,4 +120,22 @@ public class FileStats implements Serializable {
         return builder.toString();
     }
 
+    //public boolean hasPermission() {
+    //    return owner.hasPermission(Item.WORKSPACE);
+    //}
+
+    private File getSourceFile() {
+
+            return new File(report.getParentFile(), "/workspace/src/" + fileName);
+
+    }
+
+    public String getSourceFileContent() {
+
+        try {
+            return new TextFile(getSourceFile()).read();
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }

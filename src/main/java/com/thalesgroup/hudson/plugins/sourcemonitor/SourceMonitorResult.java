@@ -26,6 +26,7 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.model.Run;
+import java.io.File;
 
 import java.io.Serializable;
 
@@ -38,6 +39,7 @@ public class SourceMonitorResult implements Serializable {
 
     public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
+        report.setParentFile(owner.getParent().getRootDir());
         this.owner = owner;
     }
 
