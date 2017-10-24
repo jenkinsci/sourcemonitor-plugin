@@ -150,8 +150,8 @@ public class FileStats implements Serializable {
                 line++;
 
                 builder.append("<tr style = \"background-color:white\" class=\"noCover\">\n");
-                builder.append("<td class=\"line\"><a name='" + line + "'/>" + line + "</td>\n");
-                builder.append("<td class=\"code\">"
+                builder.append("<td style=\"padding-left:2px;text-align:right\"><a name='" + line + "'/>" + line + "</td>\n");
+                builder.append("<td style=\"padding-left:6px;padding-right:4px\">"
                         + content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "").replace("\r", "").replace(" ",
                         "&nbsp;").replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") + "</td>\n");
                 builder.append("</tr>\n");

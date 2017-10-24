@@ -4,13 +4,14 @@
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
          xmlns:i="jelly:fmt" xmlns:local="local">
     <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
-        <h1> File Details</h1>
+    <j:if test="${!empty(it.report.detailsFileOutput)}">
+    <h1> File Details</h1>
         <j:forEach var="jvar_file" items ="${it.report.detailsFileOutput}" varStatus="loop">
             <a name="ref${loop.index}"></a>
             <table style="width:50%" class="pane sortable" id="files">
-                <caption>
+                <a href = "${jvar_file.urlTransform}">
                     ${jvar_file.fileName}
-                </caption>
+                </a>
                 <col style="width:40%"></col>
                 <col style="width:8%"></col>
                 <col style="width:8%"></col>
@@ -28,7 +29,7 @@
                     <caption>Source Code</caption>
                     <thead>
                         <tr>
-                            <th style = "background-color:white; border: 1px solid lightgrey" colspan="2">${jvar_file.fileName}</th>
+                            <th style = "background-color:white; border: 1px solid lightgrey;font-size:115%;padding-left:4px;padding:3px" colspan="2">${jvar_file.fileName}</th>
                         </tr>
                     </thead>
 
@@ -38,4 +39,5 @@
                 </table>
             </div>
         </j:forEach>
+    </j:if>
 </j:jelly>
