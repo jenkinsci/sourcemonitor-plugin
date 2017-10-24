@@ -114,8 +114,6 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
 
         Element projectElt = getProject(document);
 
-        sourceMonitorReport.setSourceFilePath(projectElt.getChild("project_directory").getValue().replace('\\','/'));
-
         List<?> checkpointsEltList = getCheckpointsList(projectElt);
 
         for (int i = 0; i < checkpointsEltList.size(); i++) {

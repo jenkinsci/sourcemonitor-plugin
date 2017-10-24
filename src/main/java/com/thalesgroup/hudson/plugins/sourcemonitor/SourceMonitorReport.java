@@ -47,7 +47,6 @@ public class SourceMonitorReport implements Serializable {
     private ArrayList<FunctionStats> detailedMetrics = null;
     private ArrayList<FileStats> detailsFileOutput = null;
     private File parentFile;
-    private String sourceFilePath;
 
     private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
             .put("M0", "Lines")
@@ -129,14 +128,6 @@ public class SourceMonitorReport implements Serializable {
 
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
-    }
-
-    public String getSourceFilePath() {
-        return sourceFilePath;
-    }
-
-    public void setSourceFilePath(String sourceFilePath) {
-        this.sourceFilePath = sourceFilePath;
     }
 
     public int getCommentCoverageThresholdMinimum() { return commentCoverageThresholdMinimum; }

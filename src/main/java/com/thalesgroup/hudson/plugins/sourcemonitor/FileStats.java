@@ -1,12 +1,11 @@
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import hudson.FilePath;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.TextFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 // serializable required for multibranch pipeline
@@ -124,18 +123,46 @@ public class FileStats implements Serializable {
     //    return owner.hasPermission(Item.WORKSPACE);
     //}
 
-    private File getSourceFile() {
+    private File getSourceFile() throws IOException, InterruptedException{
 
-            return new File(report.getParentFile(), "/workspace/src/" + fileName);
-
+        return new File(report.getParentFile(), "/workspace/src/" + fileName);
     }
 
-    public String getSourceFileContent() {
+    public String getSourceFileContent() throws IOException, InterruptedException{
+
+        return createCodeTable(getSourceFile());
+    }
+
+    public String createCodeTable(File source) throws IOException, InterruptedException {
+
+        FileInputStream inputStream = null;
+        InputStreamReader isReader = null;
+        BufferedReader input = null;
+        StringBuilder builder = new StringBuilder();
+        int line = 0;
 
         try {
-            return new TextFile(getSourceFile()).read();
-        } catch (IOException e) {
-            return null;
+            inputStream = new FileInputStream(source);
+            isReader = new InputStreamReader(inputStream, "UTF-8");
+            input = new BufferedReader(isReader);
+            String content;
+            while ((content = input.readLine()) != null) {
+                line++;
+
+                builder.append("<tr style = \"background-color:white\" class=\"noCover\">\n");
+                builder.append("<td class=\"line\"><a name='" + line + "'/>" + line + "</td>\n");
+                builder.append("<td class=\"code\">"
+                        + content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "").replace("\r", "").replace(" ",
+                        "&nbsp;").replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") + "</td>\n");
+                builder.append("</tr>\n");
+            }
+            input.close();
+            inputStream.close();
+            isReader.close();
+        } catch(Exception e) {
+
         }
+
+        return builder.toString();
     }
 }
