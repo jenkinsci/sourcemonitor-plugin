@@ -26,9 +26,14 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.model.Run;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+
 import java.io.File;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.*;
 
 
 public class SourceMonitorResult implements Serializable {
@@ -36,11 +41,18 @@ public class SourceMonitorResult implements Serializable {
 	
 	private SourceMonitorReport report;
     private Run owner;
+    private Map<String, FileStats> urlKeys = new HashMap<String, FileStats>();
 
     public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
         report.setParentFile(owner.getParent().getRootDir());
         this.owner = owner;
+
+        ArrayList<FileStats> files = report.getDetailsFileOutput();
+
+        for (int i=0; i<files.size(); i++){
+            urlKeys.put(files.get(i).getUrlTransform().toLowerCase(),files.get(i));
+        }
     }
 
     public SourceMonitorReport getReport(){
@@ -113,6 +125,16 @@ public class SourceMonitorResult implements Serializable {
             builder.append("</td></tr>");
         }
         return builder.toString();
+    }
+
+    public Object getDynamic(String token, StaplerRequest req, StaplerResponse resp) throws IOException {
+        token = token.toLowerCase();
+
+        if(urlKeys.containsKey(token)){
+            return new SourceMonitorCodeDisplay(owner, urlKeys.get(token));
+        }
+
+        return null;
     }
 
     private static class BreadCrumbResult extends SourceMonitorResult implements ModelObject {

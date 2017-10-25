@@ -1,0 +1,112 @@
+<!--
+/*******************************************************************************
+* Copyright (c) 2009 Thales Corporate Services SAS                             *
+* Author : Gregory Boissinot                                                   *
+*                                                                              *
+* Permission is hereby granted, free of charge, to any person obtaining a copy *
+* of this software and associated documentation files (the "Software"), to deal*
+* in the Software without restriction, including without limitation the rights *
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell    *
+* copies of the Software, and to permit persons to whom the Software is        *
+* furnished to do so, subject to the following conditions:                     *
+*                                                                              *
+* The above copyright notice and this permission notice shall be included in   *
+* all copies or substantial portions of the Software.                          *
+*                                                                              *
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR   *
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     *
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  *
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER       *
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,*
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
+* THE SOFTWARE.                                                                *
+*******************************************************************************/
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+         xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+    <l:layout norefresh="true">
+        <st:include it="${it.owner}" page="sidepanel.jelly"/>
+        <l:main-panel>
+            <style>
+                <!--Table  Style-->
+                tr:nth-child(even) {
+                background-color: aliceblue;
+                }
+                tr:nth-child(odd) {
+                background-color:white;
+                }
+
+                th{
+                background-color: silver;
+                text-align:left;
+                padding:3px;
+                }
+
+                caption {
+                color: royalblue;
+                text-align: left;
+                margin-bottom: 3px;
+                margin-top: 30px;
+                font-size: 125%;
+                font-weight: bold;
+                }
+
+                <!--General Style-->
+                h2{
+                color: mediumblue;
+                margin-bottom: 5px;
+                }
+                h1{
+                margin-top: 40px;
+                color: Navy;
+                margin-bottom: 0px;
+                }
+
+                a:link{
+                color:royalblue;
+                }
+                a:visited{
+                color:navy;
+                }
+            </style>
+            <j:set var="fileObj" value="${it.file}"/>
+            <h1>File Metrics</h1>
+
+            <!--File Summary Table-->
+            <table style="width:50%" class="pane sortable" id="files">
+                <caption>${fileObj.fileName}</caption>
+                <col style="width:40%"></col>
+                <col style="width:8%"></col>
+                <col style="width:8%"></col>
+                <tr>
+                    <th>Function</th>
+                    <th># of Statements</th>
+                    <th>Complexity</th>
+                </tr>
+                <tbody>
+                    <j:out value="${fileObj.functionOutput}"/>
+                </tbody>
+            </table>
+
+            <!--Source Code Display-->
+            <div>
+                <table rules="cols" style="border: 1px solid lightgrey; width:50%" class="source">
+                    <caption>Source Code</caption>
+                    <thead>
+                        <tr>
+                            <th style="background-color:white; border: 1px solid lightgrey;font-size:115%;padding-left:4px;padding:3px"
+                                colspan="2">${fileObj.fileName}
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <pre>
+                        <j:out value="${fileObj.sourceFileContent}"/>
+                    </pre>
+                </table>
+            </div>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

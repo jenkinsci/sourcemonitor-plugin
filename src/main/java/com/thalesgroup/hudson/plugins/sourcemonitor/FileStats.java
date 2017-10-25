@@ -119,13 +119,29 @@ public class FileStats implements Serializable {
         return builder.toString();
     }
 
-    //public boolean hasPermission() {
-    //    return owner.hasPermission(Item.WORKSPACE);
-    //}
+    public String getUrlTransform() {
+        String name = getStringPath();
+        StringBuilder buf = new StringBuilder(name.length());
+        for (int i = 0; i < name.length(); i++) {
+            final char c = name.charAt(i);
+            if (('0' <= c && '9' >= c)
+                    || ('A' <= c && 'Z' >= c)
+                    || ('a' <= c && 'z' >= c)) {
+                buf.append(c);
+            } else {
+                buf.append('_');
+            }
+        }
+        return buf.toString();
+    }
 
     private File getSourceFile() throws IOException, InterruptedException{
 
         return new File(report.getParentFile(), "/workspace/src/" + fileName);
+    }
+
+    private String getStringPath(){
+        return report.getParentFile().getPath()+"/workspace/src/" + fileName;
     }
 
     public String getSourceFileContent() throws IOException, InterruptedException{
