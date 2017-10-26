@@ -43,7 +43,7 @@ public class SourceMonitorResult implements Serializable {
     private Run owner;
     private Map<String, FileStats> urlKeys = new HashMap<String, FileStats>();
 
-    /** Constructor */
+    //region Constructor
     public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
         this.owner = owner;
@@ -59,8 +59,9 @@ public class SourceMonitorResult implements Serializable {
             }
         }
     }
+    //endregion
 
-    /** Getters */
+    //region Getters
     public SourceMonitorReport getReport(){
         return report;
     }
@@ -68,8 +69,9 @@ public class SourceMonitorResult implements Serializable {
     public Run<?, ?> getOwner(){
         return owner;
     }
+    //endregion
 
-    /** HTML Builders */
+    //region HTML Generation
     public String getDetailedMetrics(){
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<report.getDetailedMetrics().size();i++){
@@ -108,10 +110,11 @@ public class SourceMonitorResult implements Serializable {
         }
         return builder.toString();
     }
+    //endregion
 
     /** getDynamic Function
      *
-     * Allows each file to display source code in new page (directs URL)
+     *  Allows each file to display source code in new page (directs URL)
      * */
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse resp) throws IOException {
         token = token.toLowerCase();

@@ -42,13 +42,15 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
     private Run<?, ?> build;
     private SourceMonitorResult result;
 
-    /** Constructor */
+    //region Constructor
     public SourceMonitorBuildAction(Run<?, ?> build, SourceMonitorResult result){
         this.build = build;
         this.result = result;
     }
+    //endregion
 
-    /** Getters and Setters */
+
+    //region Getters and Setters
     public String getIconFileName() {
         return "/plugin/sourcemonitor/icons/sourcemonitor-24.png";
     }
@@ -114,8 +116,9 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
         projectActions.add(new SourceMonitorProjectAction(build.getParent()));
         return projectActions;
     }
+    //endregion
 
-    /** Health Report Functions */
+    //region Health Report Functions
     @Override
     public HealthReport getBuildHealth() {
         SourceMonitorReport report = result.getReport();
@@ -183,4 +186,5 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
 
         return (int)boundedValue;
     }
+    //endregion
 }

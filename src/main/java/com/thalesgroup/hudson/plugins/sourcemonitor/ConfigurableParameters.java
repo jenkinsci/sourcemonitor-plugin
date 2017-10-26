@@ -19,7 +19,7 @@ public class ConfigurableParameters implements Serializable {
     private String relativeDetailsString;
     private String relativeSummaryString;
 
-    /** Constructors */
+    //region Constructors
     public ConfigurableParameters(FilePath summaryFilePath, FilePath detailsFilePath,
                                   int maxComplexityThresholdMaximum, int maxComplexityThresholdMinimum,
                                   double averageComplexityThresholdMaximum, double averageComplexityThresholdMinimum,
@@ -50,8 +50,9 @@ public class ConfigurableParameters implements Serializable {
         this.maxStatementsThresholdMaximum = 0;
         this.maxStatementsThresholdMinimum = 0;
     }
+    //endregion
 
-    /** Getters and Setters */
+    //region Getters and Setters
     public FilePath getSummaryFilePath() {
         return summaryFilePath;
     }
@@ -147,4 +148,5 @@ public class ConfigurableParameters implements Serializable {
     public void setRelativeSummaryString(String relativeSummaryString) {
         this.relativeSummaryString = relativeSummaryString;
     }
+    //endregion
 }

@@ -35,7 +35,7 @@ public class FileStats implements Serializable {
         functionStats.add(newFunction);
     }
 
-    /** Getters and Setters */
+    //region Getters and Setters
     public ArrayList<FunctionStats> getFunctionStats() {
         return functionStats;
     }
@@ -83,8 +83,9 @@ public class FileStats implements Serializable {
     public void setParentFile(File parentFile) {
         this.parentFile = parentFile;
     }
+    //endregion
 
-    /** HTML Generation */
+    //region HTML Generation
     public String getFunctionOutput(){
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<functionStats.size();i++){
@@ -126,8 +127,9 @@ public class FileStats implements Serializable {
         }
         return builder.toString();
     }
+    //endregion
 
-    /** Source File Fetching Helpers */
+    //region Source File Fetching Helpers
     public String getUrlTransform() {
         String name = getStringPath();
         StringBuilder buf = new StringBuilder(name.length());
@@ -157,6 +159,5 @@ public class FileStats implements Serializable {
 
         return createCodeTable(getSourceFile());
     }
-
-
+    //endregion
 }

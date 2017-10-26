@@ -15,7 +15,7 @@ public class SourceMonitorCodeDisplay implements Serializable {
         this.file = file;
     }
 
-    /** Getters and Setters */
+    //region Getters and Setters
     public Run getOwner() {
         return owner;
     }
@@ -31,4 +31,5 @@ public class SourceMonitorCodeDisplay implements Serializable {
     public void setFile(FileStats file) {
         this.file = file;
     }
+    //endregion
 }

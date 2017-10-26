@@ -60,8 +60,8 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
 
     }
 
-    /** Getters and Setters */
-	public String getSummaryFilePath() {
+    //region Getters and Setters
+    public String getSummaryFilePath() {
 		return summaryFilePath;
 	}
 
@@ -118,8 +118,8 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
     }
+    //endregion
 
-    /** Other Functions */
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
         if(this.canContinue(run.getResult())){

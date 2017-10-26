@@ -50,7 +50,7 @@ public class SourceMonitorStep extends Step {
     private int maxStatementsThresholdMaximum = 0;
     private int maxStatementsThresholdMinimum = 0;
 
-    /** Data Bound Setters */
+    //region Data Bound Setters
     @DataBoundConstructor
     public SourceMonitorStep(){}
 
@@ -103,8 +103,9 @@ public class SourceMonitorStep extends Step {
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
     }
+    //endregion
 
-    /** Getters */
+    //region Getters
     public String getSummaryFilePath() {
         return summaryFilePath;
     }
@@ -146,8 +147,8 @@ public class SourceMonitorStep extends Step {
 
         return parameters;
     }
+    //endregion
 
-    /** Other Functions */
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
         return new SourceMonitorStepExecution(this, stepContext);

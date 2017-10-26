@@ -56,7 +56,7 @@ public class SourceMonitorReport implements Serializable {
             .put("M12", "Average Complexity")
             .build();
 
-    /** Getters and Setters */
+    //region Getters and Setters
     public ArrayList<FunctionStats> getDetailedMetrics() {
         return detailedMetrics;
     }
@@ -102,8 +102,8 @@ public class SourceMonitorReport implements Serializable {
     public void setDetailsFileOutput(ArrayList<FileStats> detailsFileOutput) {
         this.detailsFileOutput = detailsFileOutput;
     }
+    //endregion
 
-    /** Other Functions */
     private Map<String, String> buildSummaryMetricsFromCheckpoints() {
         Map<String, String> summaryMetrics = new HashMap<String, String>();
 

@@ -58,7 +58,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
     public SourceMonitorParser(){
     }
 
-    /** Getters and Setters */
+
+    //region Getters and Setters
     public ConfigurableParameters getParameters() {
         return parameters;
     }
@@ -66,8 +67,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
     public void setParameters(ConfigurableParameters parameters) {
         this.parameters = parameters;
     }
+    //endregion
 
-    /** Invoke Method */
     public SourceMonitorReport invoke(java.io.File workspace, VirtualChannel channel) throws IOException {
 
         SourceMonitorReport sourceMonitorReport = new SourceMonitorReport();
@@ -82,7 +83,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         return sourceMonitorReport;
     }
 
-    /** Parsing Helper Methods */
+
+    //region Parsing Helper Methods
     private void parseSummaryFile(SourceMonitorReport sourceMonitorReport) throws IOException{
         Document document;
 
@@ -250,4 +252,5 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             newFile.addFunction(getFunctionStats(function));
         }
     }
+    //endregion
 }
