@@ -108,16 +108,10 @@ public class FileStats implements Serializable {
 
     public String createCodeTable(File source) throws IOException, InterruptedException {
 
-        FileInputStream inputStream = null;
-        InputStreamReader isReader = null;
-        BufferedReader input = null;
         StringBuilder builder = new StringBuilder();
         int line = 0;
 
-        try {
-            inputStream = new FileInputStream(source);
-            isReader = new InputStreamReader(inputStream, "UTF-8");
-            input = new BufferedReader(isReader);
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(source), "UTF-8"))){
             String content;
             while ((content = input.readLine()) != null) {
                 line++;
@@ -129,12 +123,7 @@ public class FileStats implements Serializable {
                         "&nbsp;").replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") + "</td>\n");
                 builder.append("</tr>\n");
             }
-        } finally {
-            input.close();
-            inputStream.close();
-            isReader.close();
         }
-
         return builder.toString();
     }
 
