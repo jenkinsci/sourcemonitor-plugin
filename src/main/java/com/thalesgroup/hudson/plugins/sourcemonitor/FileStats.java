@@ -91,7 +91,6 @@ public class FileStats implements Serializable {
             builder.append("<tr><td>");
             builder.append(functionStats.get(i).getFunction());
             builder.append("</td>");
-            String str1;
 
             int numState = functionStats.get(i).getStatements();
             int paramHealth = SourceMonitorUtility.getStatementsHealth(parameters, numState);
