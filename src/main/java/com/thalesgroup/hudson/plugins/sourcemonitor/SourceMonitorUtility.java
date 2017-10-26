@@ -5,6 +5,8 @@ import java.io.Serializable;
 // serializable required for multibranch pipeline
 public class SourceMonitorUtility implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static final int greenZone = 80;
+    private static final int orangeZone = 60;
 
     public static int getStatementsHealth(ConfigurableParameters parameters, int maxStatements){
         int max = parameters.getMaxStatementsThresholdMaximum();
@@ -44,10 +46,10 @@ public class SourceMonitorUtility implements Serializable {
 
         String coloredString;
 
-        if (paramHealth > 80){
+        if (paramHealth > greenZone){
             coloredString = "<td style=\"color:darkgreen\">" + parameter;
         }
-        else if(paramHealth > 60){
+        else if(paramHealth > orangeZone){
             coloredString = "<td style=\"color:darkorange\">" + parameter;
         }
         else {
