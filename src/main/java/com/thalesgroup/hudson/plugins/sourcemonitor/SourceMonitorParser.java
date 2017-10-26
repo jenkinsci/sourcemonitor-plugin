@@ -87,8 +87,8 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         Document document;
 
         try {
-            SAXBuilder sxb2 = new SAXBuilder();
-            document = sxb2.build(new InputStreamReader(new FileInputStream(new File(parameters.getSummaryFilePath().toURI())), "UTF-8"));
+            SAXBuilder sxb = new SAXBuilder();
+            document = sxb.build(new InputStreamReader(new FileInputStream(new File(parameters.getSummaryFilePath().toURI())), "UTF-8"));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Parsing file error :" + e.toString());
             throw new AbortException("Parsing file error");
