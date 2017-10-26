@@ -129,11 +129,10 @@ public class FileStats implements Serializable {
                         "&nbsp;").replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") + "</td>\n");
                 builder.append("</tr>\n");
             }
+        } finally {
             input.close();
             inputStream.close();
             isReader.close();
-        } catch(Exception e) {
-
         }
 
         return builder.toString();
