@@ -27,17 +27,18 @@ import com.google.common.collect.ImmutableMap;
 
 import java.io.Serializable;
 import java.util.*;
+import hudson.model.Run;
+import java.io.File;
 
 public class SourceMonitorReport implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private int maxComplexityThresholdMaximum = 0;
-    private int maxComplexityThresholdMinimum = 0;
-    private double averageComplexityThresholdMaximum = 0;
-    private double averageComplexityThresholdMinimum = 0;
-    private int commentCoverageThresholdMaximum = 0;
-    private int commentCoverageThresholdMinimum = 0;
+	private ConfigurableParameters parameters;
+    private List<Map<String,String>> checkpoints;
+    private Map<String, String> summaryMetrics;
+    private ArrayList<FunctionStats> detailedMetrics = null;
+    private ArrayList<FileStats> detailsFileOutput = null;
 
     private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
             .put("M0", "Lines")
@@ -54,10 +55,8 @@ public class SourceMonitorReport implements Serializable {
             .put("M11", "Average Block Depth")
             .put("M12", "Average Complexity")
             .build();
-    private List<Map<String,String>> checkpoints;
-    private Map<String, String> summaryMetrics;
-    private ArrayList<FunctionStats> detailedMetrics;
 
+    //region Getters and Setters
     public ArrayList<FunctionStats> getDetailedMetrics() {
         return detailedMetrics;
     }
@@ -66,41 +65,13 @@ public class SourceMonitorReport implements Serializable {
         this.detailedMetrics = detailedMetrics;
     }
 
-    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
-		this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
-	}
-
-    public int getMaxComplexityThresholdMaximum() { return maxComplexityThresholdMaximum; }
-
-    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
-        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
+    public ConfigurableParameters getParameters() {
+        return parameters;
     }
 
-    public int getMaxComplexityThresholdMinimum() { return maxComplexityThresholdMinimum; }
-
-    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
-        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
+    public void setParameters(ConfigurableParameters parameters) {
+        this.parameters = parameters;
     }
-
-    public double getAverageComplexityThresholdMaximum() { return averageComplexityThresholdMaximum; }
-
-    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
-        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
-    }
-
-    public double getAverageComplexityThresholdMinimum() { return averageComplexityThresholdMinimum; }
-
-    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
-        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
-    }
-
-    public int getCommentCoverageThresholdMaximum() { return commentCoverageThresholdMaximum; }
-
-    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
-        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
-    }
-
-    public int getCommentCoverageThresholdMinimum() { return commentCoverageThresholdMinimum; }
 
     @Deprecated
     public List<Map<String,String>> getCheckpoints() {
@@ -123,6 +94,15 @@ public class SourceMonitorReport implements Serializable {
 
         return summaryMetrics;
     }
+
+    public ArrayList<FileStats> getDetailsFileOutput() {
+        return detailsFileOutput;
+    }
+
+    public void setDetailsFileOutput(ArrayList<FileStats> detailsFileOutput) {
+        this.detailsFileOutput = detailsFileOutput;
+    }
+    //endregion
 
     private Map<String, String> buildSummaryMetricsFromCheckpoints() {
         Map<String, String> summaryMetrics = new HashMap<String, String>();

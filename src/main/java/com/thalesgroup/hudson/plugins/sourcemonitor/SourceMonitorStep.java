@@ -40,15 +40,37 @@ import java.util.Set;
 
 public class SourceMonitorStep extends Step {
     private String summaryFilePath;
+    private String detailsFilePath;
     private int maxComplexityThresholdMaximum = 0;
     private int maxComplexityThresholdMinimum = 0;
     private double averageComplexityThresholdMaximum = 0;
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
 
+    //region Data Bound Setters
     @DataBoundConstructor
-    public SourceMonitorStep(String summaryFilePath){
+    public SourceMonitorStep(){}
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum= maxStatementsThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setDetailsFilePath(String detailsFilePath) {
+        this.detailsFilePath = detailsFilePath;
+    }
+
+    @DataBoundSetter
+    public void setSummaryFilePath(String summaryFilePath) {
         this.summaryFilePath = summaryFilePath;
     }
 
@@ -81,7 +103,9 @@ public class SourceMonitorStep extends Step {
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
     }
+    //endregion
 
+    //region Getters
     public String getSummaryFilePath() {
         return summaryFilePath;
     }
@@ -103,6 +127,27 @@ public class SourceMonitorStep extends Step {
     public int getCommentCoverageThresholdMinimum() {
         return commentCoverageThresholdMinimum;
     }
+    public int getMaxStatementsThresholdMaximum() {
+        return maxStatementsThresholdMaximum;
+    }
+    public int getMaxStatementsThresholdMinimum() {
+        return maxStatementsThresholdMinimum;
+    }
+    public String getDetailsFilePath() {
+        return detailsFilePath;
+    }
+
+    public ConfigurableParameters getParameters(){
+        ConfigurableParameters parameters = new ConfigurableParameters(null, null, maxComplexityThresholdMaximum,
+                maxComplexityThresholdMinimum, averageComplexityThresholdMaximum, averageComplexityThresholdMinimum,
+                commentCoverageThresholdMaximum, commentCoverageThresholdMinimum, maxStatementsThresholdMaximum,
+                maxStatementsThresholdMinimum);
+        parameters.setRelativeDetailsString(detailsFilePath);
+        parameters.setRelativeSummaryString(summaryFilePath);
+
+        return parameters;
+    }
+    //endregion
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
@@ -127,9 +172,9 @@ public class SourceMonitorStep extends Step {
             return "Source Monitor Parser";
         }
 
-        public FormValidation doCheckSummaryFilePath(@QueryParameter String value) {
-            if (value.isEmpty()) {
-                return FormValidation.error("A valid file/path is required.");
+        public FormValidation doCheckSummaryFilePath(@QueryParameter String value, @QueryParameter String detailsFilePath) {
+            if (value.isEmpty() && detailsFilePath.isEmpty()) {
+                return FormValidation.error("A valid file/path is required in either the details or summary field.");
             }
             return FormValidation.ok();
         }

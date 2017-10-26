@@ -26,8 +26,14 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.model.Run;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
+import java.io.File;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.*;
 
 
 public class SourceMonitorResult implements Serializable {
@@ -35,12 +41,27 @@ public class SourceMonitorResult implements Serializable {
 	
 	private SourceMonitorReport report;
     private Run owner;
+    private Map<String, FileStats> urlKeys = new HashMap<String, FileStats>();
 
+    //region Constructor
     public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
         this.owner = owner;
-    }
 
+        // Need to process files if details file was parsed
+        if (report.getDetailsFileOutput() != null) {
+            ArrayList<FileStats> files = report.getDetailsFileOutput();
+
+            for (int i = 0; i < files.size(); i++) {
+                files.get(i).setParentFile(owner.getParent().getRootDir());
+                files.get(i).setParameters(report.getParameters());
+                urlKeys.put(files.get(i).getUrlTransform().toLowerCase(), files.get(i));
+            }
+        }
+    }
+    //endregion
+
+    //region Getters
     public SourceMonitorReport getReport(){
         return report;
     }
@@ -48,7 +69,9 @@ public class SourceMonitorResult implements Serializable {
     public Run<?, ?> getOwner(){
         return owner;
     }
+    //endregion
 
+    //region HTML Generation
     public String getDetailedMetrics(){
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<report.getDetailedMetrics().size();i++){
@@ -61,6 +84,46 @@ public class SourceMonitorResult implements Serializable {
             builder.append("</td></tr>");
         }
         return builder.toString();
+    }
+
+    public String getDetailsFileOutput(){
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<report.getDetailsFileOutput().size();i++){
+            String str1 = "<tr><td><a href = \"#ref"+i+"\">";
+            builder.append(str1);
+            builder.append(report.getDetailsFileOutput().get(i).getFileName());
+            builder.append("</a></td><td>");
+            builder.append(report.getDetailsFileOutput().get(i).getNumFunctions());
+            builder.append("</td><td>");
+            builder.append(report.getDetailsFileOutput().get(i).getNumStatements());
+            builder.append("</td>");
+
+            int maxState = report.getDetailsFileOutput().get(i).getMaxStatements();
+            int paramHealth = SourceMonitorUtility.getStatementsHealth(report.getParameters(), maxState);
+            builder.append(SourceMonitorUtility.getColoredString(paramHealth, maxState));
+            builder.append("</td>");
+
+            int maxComp = report.getDetailsFileOutput().get(i).getMaxComplexity();
+            paramHealth = SourceMonitorUtility.getComplexityHealth(report.getParameters(), maxComp);
+            builder.append(SourceMonitorUtility.getColoredString(paramHealth, maxComp));
+            builder.append("</td></tr>");
+        }
+        return builder.toString();
+    }
+    //endregion
+
+    /** getDynamic Function
+     *
+     *  Allows each file to display source code in new page (directs URL)
+     * */
+    public Object getDynamic(String token, StaplerRequest req, StaplerResponse resp) throws IOException {
+        token = token.toLowerCase();
+
+        if(urlKeys.containsKey(token)){
+            return new SourceMonitorCodeDisplay(owner, urlKeys.get(token));
+        }
+
+        return null;
     }
 
     private static class BreadCrumbResult extends SourceMonitorResult implements ModelObject {

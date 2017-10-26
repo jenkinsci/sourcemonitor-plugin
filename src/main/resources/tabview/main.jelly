@@ -35,7 +35,8 @@
             <div>Not available</div>
         </j:when>
         <j:otherwise>
-    		<st:include page="summary.jelly" /> 
+    		<st:include page="summary.jelly" />
+            <st:include page="details.jelly" />
         </j:otherwise>
 	  </j:choose> 
 

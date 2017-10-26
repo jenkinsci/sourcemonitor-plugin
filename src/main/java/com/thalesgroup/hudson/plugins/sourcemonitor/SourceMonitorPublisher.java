@@ -43,34 +43,55 @@ import javax.annotation.Nonnull;
 public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep {
     private static final long serialVersionUID = 1L;
 
-    private final String summaryFilePath;
+    private String summaryFilePath = null;
+    private String detailsFilePath = null;
     private int maxComplexityThresholdMaximum = 0;
     private int maxComplexityThresholdMinimum = 0;
     private double averageComplexityThresholdMaximum = 0;
     private double averageComplexityThresholdMinimum = 0;
     private int commentCoverageThresholdMaximum = 0;
     private int commentCoverageThresholdMinimum = 0;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
+    private ConfigurableParameters parameters = null;
 
     @DataBoundConstructor
-    public SourceMonitorPublisher(String summaryFilePath){
-        this.summaryFilePath = summaryFilePath;
+    public SourceMonitorPublisher(){
+
     }
 
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.BUILD;
-    }
-
-    protected boolean canContinue(final Result result) {
-        return result != Result.ABORTED && result != Result.FAILURE;
-    }
-
-	public String getSummaryFilePath() {
+    //region Getters and Setters
+    public String getSummaryFilePath() {
 		return summaryFilePath;
 	}
 
-	@DataBoundSetter
+	public void setParameters(ConfigurableParameters parameters){
+        this.parameters = parameters;
+    }
+
+    @DataBoundSetter
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
         this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setSummaryFilePath(String summaryFilePath) {
+        this.summaryFilePath = summaryFilePath;
+    }
+
+    @DataBoundSetter
+    public void setDetailsFilePath(String detailsFilePath) {
+        this.detailsFilePath = detailsFilePath;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum= maxStatementsThresholdMaximum;
     }
 
     @DataBoundSetter
@@ -97,23 +118,49 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
     }
+    //endregion
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
         if(this.canContinue(run.getResult())){
 
             listener.getLogger().println("Parsing sourcemonitor results");
+            SourceMonitorParser parser = new SourceMonitorParser();
 
             PrintStream logger = listener.getLogger();
-            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath));
 
             // Set the parameters for the health metrics.
-            parser.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);
-            parser.setAverageComplexityThresholdMinimum(averageComplexityThresholdMinimum);
-            parser.setCommentCoverageThresholdMaximum(commentCoverageThresholdMaximum);
-            parser.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
-            parser.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
-            parser.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
+            // If configurable parameters object isnt set by step, create one
+            if (parameters == null){
+
+                FilePath summary = null;
+                if ((summaryFilePath != null)&&(!summaryFilePath.isEmpty())){
+                    summary = new FilePath(filePath, summaryFilePath);
+                }
+                FilePath details = null;
+                if ((detailsFilePath != null) && (!detailsFilePath.isEmpty())){
+                    details = new FilePath(filePath, detailsFilePath);
+                }
+                parameters = new ConfigurableParameters(summary, details, maxComplexityThresholdMaximum,
+                        maxComplexityThresholdMinimum, averageComplexityThresholdMaximum, averageComplexityThresholdMinimum,
+                        commentCoverageThresholdMaximum, commentCoverageThresholdMinimum, maxStatementsThresholdMaximum,
+                        maxStatementsThresholdMinimum);
+            }
+            // if step set the configurable parameters object, create file paths
+            else
+            {
+                // step does not have access to the base file path so it populates string relative paths
+                // full file paths must be created in publisher with source path
+                if ((parameters.getRelativeSummaryString() != null) && !parameters.getRelativeSummaryString().isEmpty()) {
+
+                    parameters.setSummaryFilePath(new FilePath(filePath, parameters.getRelativeSummaryString()));
+                }
+                if ((parameters.getRelativeDetailsString() != null) && !parameters.getRelativeDetailsString().isEmpty()){
+                    parameters.setDetailsFilePath(new FilePath(filePath, parameters.getRelativeDetailsString()));
+                }
+            }
+
+            parser.setParameters(parameters);
 
             SourceMonitorReport report;
             try{
@@ -144,5 +191,13 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
             }
         }
         return currentResult;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
+    protected boolean canContinue(final Result result) {
+        return result != Result.ABORTED && result != Result.FAILURE;
     }
 }

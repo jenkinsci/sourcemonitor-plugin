@@ -29,6 +29,9 @@
 	<f:entry title="${%SourceMonitor summary metric file path}">
 		<f:textbox name="summaryFilePath" value="${instance.summaryFilePath}"/>
 	</f:entry>
+	<f:entry title="${%SourceMonitor detailed metric file path}">
+		<f:textbox name="detailsFilePath" value="${instance.detailsFilePath}"/>
+	</f:entry>
 	<f:entry title="${%Max complexity maximum threshold}">
 		<f:textbox name="maxComplexityThresholdMaximum" value="${instance.maxComplexityThresholdMaximum}"/>
 	</f:entry>
@@ -46,6 +49,12 @@
 	</f:entry>
 	<f:entry title="${%Comment coverage minimum threshold}">
 		<f:textbox name="commentCoverageThresholdMinimum" value="${instance.commentCoverageThresholdMinimum}"/>
+	</f:entry>
+    <f:entry title="${%Max Statements maximum threshold}">
+        <f:textbox name="maxStatementsThresholdMaximum" value="${instance.maxStatementsThresholdMaximum}"/>
+    </f:entry>
+    <f:entry title="${%Max Statements minimum threshold}">
+		<f:textbox name="maxStatementsThresholdMinimum" value="${instance.maxStatementsThresholdMinimum}"/>
 	</f:entry>
 
 </j:jelly>

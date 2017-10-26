@@ -37,17 +37,20 @@ import org.kohsuke.stapler.StaplerProxy;
 
 public class SourceMonitorBuildAction implements HealthReportingAction, Serializable, StaplerProxy, SimpleBuildStep.LastBuildAction {
     private static final long serialVersionUID = 1L;
-
     public static final String URL_NAME = "sourcemonitor";
 
     private Run<?, ?> build;
     private SourceMonitorResult result;
 
+    //region Constructor
     public SourceMonitorBuildAction(Run<?, ?> build, SourceMonitorResult result){
         this.build = build;
         this.result = result;
     }
+    //endregion
 
+
+    //region Getters and Setters
     public String getIconFileName() {
         return "/plugin/sourcemonitor/icons/sourcemonitor-24.png";
     }
@@ -113,7 +116,9 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
         projectActions.add(new SourceMonitorProjectAction(build.getParent()));
         return projectActions;
     }
+    //endregion
 
+    //region Health Report Functions
     @Override
     public HealthReport getBuildHealth() {
         SourceMonitorReport report = result.getReport();
@@ -125,15 +130,16 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
         int averageComplexityHealth = 101;
         int minimumHealth;
         Localizable description;
+        ConfigurableParameters parameters = report.getParameters();
 
-        if (report.getMaxComplexityThresholdMaximum() > 0) {
-            maxComplexityHealth = calculateHealthReverse(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
+        if (parameters.getMaxComplexityThresholdMaximum() > 0) {
+            maxComplexityHealth = calculateHealthReverse(maxComplexity, parameters.getMaxComplexityThresholdMinimum(), parameters.getMaxComplexityThresholdMaximum());
         }
-        if (report.getCommentCoverageThresholdMaximum() > 0) {
-            commentCoverageHealth = calculateHealth(commentCoverage, report.getCommentCoverageThresholdMinimum(), report.getCommentCoverageThresholdMaximum());
+        if (parameters.getCommentCoverageThresholdMaximum() > 0) {
+            commentCoverageHealth = calculateHealth(commentCoverage, parameters.getCommentCoverageThresholdMinimum(), parameters.getCommentCoverageThresholdMaximum());
         }
-        if (report.getAverageComplexityThresholdMaximum() > 0) {
-            averageComplexityHealth = calculateHealthReverse(averageComplexity, report.getAverageComplexityThresholdMinimum(), report.getAverageComplexityThresholdMaximum());
+        if (parameters.getAverageComplexityThresholdMaximum() > 0) {
+            averageComplexityHealth = calculateHealthReverse(averageComplexity, parameters.getAverageComplexityThresholdMinimum(), parameters.getAverageComplexityThresholdMaximum());
         }
 
         if ((maxComplexityHealth < commentCoverageHealth) && (maxComplexityHealth < averageComplexityHealth)) {
@@ -180,4 +186,5 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
 
         return (int)boundedValue;
     }
+    //endregion
 }
