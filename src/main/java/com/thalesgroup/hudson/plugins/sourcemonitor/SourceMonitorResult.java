@@ -47,12 +47,15 @@ public class SourceMonitorResult implements Serializable {
         this.report = report;
         this.owner = owner;
 
-        ArrayList<FileStats> files = report.getDetailsFileOutput();
+        // Need to process files if details file was parsed
+        if (report.getDetailsFileOutput() != null) {
+            ArrayList<FileStats> files = report.getDetailsFileOutput();
 
-        for (int i=0; i<files.size(); i++){
-            files.get(i).setParentFile(owner.getParent().getRootDir());
-            files.get(i).setParameters(report.getParameters());
-            urlKeys.put(files.get(i).getUrlTransform().toLowerCase(),files.get(i));
+            for (int i = 0; i < files.size(); i++) {
+                files.get(i).setParentFile(owner.getParent().getRootDir());
+                files.get(i).setParameters(report.getParameters());
+                urlKeys.put(files.get(i).getUrlTransform().toLowerCase(), files.get(i));
+            }
         }
     }
 

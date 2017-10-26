@@ -55,14 +55,10 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     private int maxStatementsThresholdMinimum = 0;
     private ConfigurableParameters parameters = null;
 
-    /** Constructors */
     @DataBoundConstructor
-    public SourceMonitorPublisher(String summaryFilePath, String detailsFilePath){
-        this.summaryFilePath = summaryFilePath;
-        this.detailsFilePath = detailsFilePath;
-    }
+    public SourceMonitorPublisher(){
 
-    public SourceMonitorPublisher(){}
+    }
 
     /** Getters and Setters */
 	public String getSummaryFilePath() {
@@ -76,6 +72,16 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     @DataBoundSetter
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
         this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setSummaryFilePath(String summaryFilePath) {
+        this.summaryFilePath = summaryFilePath;
+    }
+
+    @DataBoundSetter
+    public void setDetailsFilePath(String detailsFilePath) {
+        this.detailsFilePath = detailsFilePath;
     }
 
     @DataBoundSetter
@@ -128,11 +134,11 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
             if (parameters == null){
 
                 FilePath summary = null;
-                if (summaryFilePath != null){
+                if ((summaryFilePath != null)&&(!summaryFilePath.isEmpty())){
                     summary = new FilePath(filePath, summaryFilePath);
                 }
                 FilePath details = null;
-                if (detailsFilePath != null){
+                if ((detailsFilePath != null) && (!detailsFilePath.isEmpty())){
                     details = new FilePath(filePath, detailsFilePath);
                 }
                 parameters = new ConfigurableParameters(summary, details, maxComplexityThresholdMaximum,

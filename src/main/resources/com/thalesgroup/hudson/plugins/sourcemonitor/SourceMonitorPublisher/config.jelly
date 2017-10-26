@@ -50,10 +50,11 @@
 	<f:entry title="${%Comment coverage minimum threshold}">
 		<f:textbox name="commentCoverageThresholdMinimum" value="${instance.commentCoverageThresholdMinimum}"/>
 	</f:entry>
-	<f:entry title="${%Max Statements minimum threshold}">
+    <f:entry title="${%Max Statements maximum threshold}">
+        <f:textbox name="maxStatementsThresholdMaximum" value="${instance.maxStatementsThresholdMaximum}"/>
+    </f:entry>
+    <f:entry title="${%Max Statements minimum threshold}">
 		<f:textbox name="maxStatementsThresholdMinimum" value="${instance.maxStatementsThresholdMinimum}"/>
 	</f:entry>
-	<f:entry title="${%Max Statements maximum threshold}">
-		<f:textbox name="maxStatementsThresholdMaximum" value="${instance.maxStatementsThresholdMaximum}"/>
-	</f:entry>
+
 </j:jelly>
