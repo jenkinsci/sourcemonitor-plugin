@@ -4,6 +4,7 @@ import java.io.Serializable;
 import hudson.FilePath;
 // serializable required for multibranch pipeline
 public class ConfigurableParameters implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private FilePath summaryFilePath;
     private FilePath detailsFilePath;
