@@ -14,6 +14,7 @@ public class SourceMonitorCodeDisplay implements Serializable {
         this.file = file;
     }
 
+    /** Getters and Setters */
     public Run getOwner() {
         return owner;
     }

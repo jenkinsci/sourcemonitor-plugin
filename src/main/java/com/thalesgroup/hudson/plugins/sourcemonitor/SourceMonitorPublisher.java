@@ -149,10 +149,13 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
             // if step set the configurable parameters object, create file paths
             else
             {
-                if (parameters.getRelativeSummaryString() != null) {
+                // step does not have access to the base file path so it populates string relative paths
+                // full file paths must be created in publisher with source path
+                if ((parameters.getRelativeSummaryString() != null) && !parameters.getRelativeSummaryString().isEmpty()) {
+
                     parameters.setSummaryFilePath(new FilePath(filePath, parameters.getRelativeSummaryString()));
                 }
-                if (parameters.getRelativeDetailsString() != null){
+                if ((parameters.getRelativeDetailsString() != null) && !parameters.getRelativeDetailsString().isEmpty()){
                     parameters.setDetailsFilePath(new FilePath(filePath, parameters.getRelativeDetailsString()));
                 }
             }

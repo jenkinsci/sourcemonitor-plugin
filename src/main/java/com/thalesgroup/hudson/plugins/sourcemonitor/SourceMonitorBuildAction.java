@@ -37,17 +37,18 @@ import org.kohsuke.stapler.StaplerProxy;
 
 public class SourceMonitorBuildAction implements HealthReportingAction, Serializable, StaplerProxy, SimpleBuildStep.LastBuildAction {
     private static final long serialVersionUID = 1L;
-
     public static final String URL_NAME = "sourcemonitor";
 
     private Run<?, ?> build;
     private SourceMonitorResult result;
 
+    /** Constructor */
     public SourceMonitorBuildAction(Run<?, ?> build, SourceMonitorResult result){
         this.build = build;
         this.result = result;
     }
 
+    /** Getters and Setters */
     public String getIconFileName() {
         return "/plugin/sourcemonitor/icons/sourcemonitor-24.png";
     }
@@ -114,6 +115,7 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
         return projectActions;
     }
 
+    /** Health Report Functions */
     @Override
     public HealthReport getBuildHealth() {
         SourceMonitorReport report = result.getReport();

@@ -43,6 +43,7 @@ public class SourceMonitorResult implements Serializable {
     private Run owner;
     private Map<String, FileStats> urlKeys = new HashMap<String, FileStats>();
 
+    /** Constructor */
     public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
         this.owner = owner;
@@ -59,6 +60,7 @@ public class SourceMonitorResult implements Serializable {
         }
     }
 
+    /** Getters */
     public SourceMonitorReport getReport(){
         return report;
     }
