@@ -10,6 +10,7 @@ import java.util.*;
 
 // serializable required for multibranch pipeline
 public class FileStats implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String fileName;
     private int numFunctions;

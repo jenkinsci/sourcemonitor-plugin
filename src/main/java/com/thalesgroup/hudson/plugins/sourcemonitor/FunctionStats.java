@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 // serializable required for multibranch pipeline
 public class FunctionStats implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int complexity;
     private int statements;
     private String function;

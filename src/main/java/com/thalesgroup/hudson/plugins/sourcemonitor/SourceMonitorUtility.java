@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 // serializable required for multibranch pipeline
 public class SourceMonitorUtility implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public static int getStatementsHealth(ConfigurableParameters parameters, int maxStatements){
         int max = parameters.getMaxStatementsThresholdMaximum();

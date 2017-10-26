@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 // serializable required for multibranch pipeline
 public class SourceMonitorCodeDisplay implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Run owner;
     private FileStats file;
