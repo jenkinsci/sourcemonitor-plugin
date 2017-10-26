@@ -66,6 +66,9 @@ public class SourceMonitorReport implements Serializable {
     }
 
     public ConfigurableParameters getParameters() {
+        if (parameters == null){
+            return new ConfigurableParameters();
+        }
         return parameters;
     }
 
