@@ -53,24 +53,25 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
     private int commentCoverageThresholdMinimum = 0;
     private int maxStatementsThresholdMaximum = 0;
     private int maxStatementsThresholdMinimum = 0;
+    private ConfigurableParameters parameters = null;
 
+    /** Constructors */
     @DataBoundConstructor
     public SourceMonitorPublisher(String summaryFilePath, String detailsFilePath){
         this.summaryFilePath = summaryFilePath;
         this.detailsFilePath = detailsFilePath;
     }
 
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.BUILD;
-    }
+    public SourceMonitorPublisher(){}
 
-    protected boolean canContinue(final Result result) {
-        return result != Result.ABORTED && result != Result.FAILURE;
-    }
-
+    /** Getters and Setters */
 	public String getSummaryFilePath() {
 		return summaryFilePath;
 	}
+
+	public void setParameters(ConfigurableParameters parameters){
+        this.parameters = parameters;
+    }
 
     @DataBoundSetter
     public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
@@ -112,31 +113,45 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
         this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
     }
 
+    /** Other Functions */
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
         if(this.canContinue(run.getResult())){
 
             listener.getLogger().println("Parsing sourcemonitor results");
-            SourceMonitorParser parser;
+            SourceMonitorParser parser = new SourceMonitorParser();
 
             PrintStream logger = listener.getLogger();
-            if (detailsFilePath != null) {
-                parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath), new FilePath(filePath, detailsFilePath));
-            }
-            else{
-                parser = new SourceMonitorParser(new FilePath(filePath, summaryFilePath));
-            }
-
 
             // Set the parameters for the health metrics.
-            parser.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);
-            parser.setAverageComplexityThresholdMinimum(averageComplexityThresholdMinimum);
-            parser.setCommentCoverageThresholdMaximum(commentCoverageThresholdMaximum);
-            parser.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
-            parser.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
-            parser.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
-            parser.setMaxStatementsThresholdMaximum(maxStatementsThresholdMaximum);
-            parser.setMaxStatementsThresholdMinimum(maxStatementsThresholdMinimum);
+            // If configurable parameters object isnt set by step, create one
+            if (parameters == null){
+
+                FilePath summary = null;
+                if (summaryFilePath != null){
+                    summary = new FilePath(filePath, summaryFilePath);
+                }
+                FilePath details = null;
+                if (detailsFilePath != null){
+                    details = new FilePath(filePath, detailsFilePath);
+                }
+                parameters = new ConfigurableParameters(summary, details, maxComplexityThresholdMaximum,
+                        maxComplexityThresholdMinimum, averageComplexityThresholdMaximum, averageComplexityThresholdMinimum,
+                        commentCoverageThresholdMaximum, commentCoverageThresholdMinimum, maxStatementsThresholdMaximum,
+                        maxStatementsThresholdMinimum);
+            }
+            // if step set the configurable parameters object, create file paths
+            else
+            {
+                if (parameters.getRelativeSummaryString() != null) {
+                    parameters.setSummaryFilePath(new FilePath(filePath, parameters.getRelativeSummaryString()));
+                }
+                if (parameters.getRelativeDetailsString() != null){
+                    parameters.setDetailsFilePath(new FilePath(filePath, parameters.getRelativeDetailsString()));
+                }
+            }
+
+            parser.setParameters(parameters);
 
             SourceMonitorReport report;
             try{
@@ -167,5 +182,13 @@ public class SourceMonitorPublisher extends Recorder implements Serializable, Si
             }
         }
         return currentResult;
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
+    }
+
+    protected boolean canContinue(final Result result) {
+        return result != Result.ABORTED && result != Result.FAILURE;
     }
 }

@@ -16,14 +16,14 @@ public class FileStats implements Serializable {
     private int numStatements;
     private int maxComplexity;
     private int maxStatements;
-    private SourceMonitorReport report;
+    private File parentFile;
+    private ConfigurableParameters parameters;
     private ArrayList<FunctionStats> functionStats;
 
 
-    public FileStats(SourceMonitorReport report) {
+    public FileStats() {
         functionStats = new ArrayList<FunctionStats>();
         maxStatements = 0;
-        this.report = report;
     }
 
     public void addFunction(FunctionStats newFunction){
@@ -34,6 +34,7 @@ public class FileStats implements Serializable {
         functionStats.add(newFunction);
     }
 
+    /** Getters and Setters */
     public ArrayList<FunctionStats> getFunctionStats() {
         return functionStats;
     }
@@ -74,6 +75,15 @@ public class FileStats implements Serializable {
         this.maxComplexity = maxComplexity;
     }
 
+    public void setParameters(ConfigurableParameters parameters) {
+        this.parameters = parameters;
+    }
+
+    public void setParentFile(File parentFile) {
+        this.parentFile = parentFile;
+    }
+
+    /** HTML Generation */
     public String getFunctionOutput(){
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<functionStats.size();i++){
@@ -83,70 +93,17 @@ public class FileStats implements Serializable {
             String str1;
 
             int numState = functionStats.get(i).getStatements();
-            int paramHealth = report.getStateHealth(numState);
-
-            if (paramHealth >= 80){
-                str1 = "<td style=\"color:darkgreen\">"+numState;
-                builder.append(str1);
-            }
-            else if (paramHealth >= 60){
-                str1 = "<td style=\"color:darkorange\">"+numState;
-                builder.append(str1);
-            }
-            else{
-                str1 = "<td style=\"color:red;font-weight:bold\">"+numState;
-                builder.append(str1);
-            }
+            int paramHealth = SourceMonitorUtility.getStatementsHealth(parameters, numState);
+            builder.append(SourceMonitorUtility.getColoredString(paramHealth, numState));
             builder.append("</td>");
 
             int maxComp = functionStats.get(i).getComplexity();
-            paramHealth = report.getCompHealth(maxComp);
-            if (paramHealth >= 80){
-                str1 = "<td style=\"color:darkgreen\">"+maxComp;
-                builder.append(str1);
-            }
-            else if (paramHealth >= 60){
-                str1 = "<td style=\"color:darkorange\">"+maxComp;
-                builder.append(str1);
-            }
-            else{
-                str1 = "<td style=\"color:red;font-weight:bold\">"+maxComp;
-                builder.append(str1);
-            }
+            paramHealth = SourceMonitorUtility.getComplexityHealth(parameters, maxComp);
+            builder.append(SourceMonitorUtility.getColoredString(paramHealth, maxComp));
             builder.append("</td>");
             builder.append("</td></tr>");
         }
         return builder.toString();
-    }
-
-    public String getUrlTransform() {
-        String name = getStringPath();
-        StringBuilder buf = new StringBuilder(name.length());
-        for (int i = 0; i < name.length(); i++) {
-            final char c = name.charAt(i);
-            if (('0' <= c && '9' >= c)
-                    || ('A' <= c && 'Z' >= c)
-                    || ('a' <= c && 'z' >= c)) {
-                buf.append(c);
-            } else {
-                buf.append('_');
-            }
-        }
-        return buf.toString();
-    }
-
-    private File getSourceFile() throws IOException, InterruptedException{
-
-        return new File(report.getParentFile(), "/workspace/src/" + fileName);
-    }
-
-    private String getStringPath(){
-        return report.getParentFile().getPath()+"/workspace/src/" + fileName;
-    }
-
-    public String getSourceFileContent() throws IOException, InterruptedException{
-
-        return createCodeTable(getSourceFile());
     }
 
     public String createCodeTable(File source) throws IOException, InterruptedException {
@@ -181,4 +138,37 @@ public class FileStats implements Serializable {
 
         return builder.toString();
     }
+
+    /** Source File Fetching Helpers */
+    public String getUrlTransform() {
+        String name = getStringPath();
+        StringBuilder buf = new StringBuilder(name.length());
+        for (int i = 0; i < name.length(); i++) {
+            final char c = name.charAt(i);
+            if (('0' <= c && '9' >= c)
+                    || ('A' <= c && 'Z' >= c)
+                    || ('a' <= c && 'z' >= c)) {
+                buf.append(c);
+            } else {
+                buf.append('_');
+            }
+        }
+        return buf.toString();
+    }
+
+    private File getSourceFile() throws IOException, InterruptedException{
+
+        return new File(parentFile, "/workspace/src/" + fileName);
+    }
+
+    private String getStringPath(){
+        return parentFile.getPath() +"/workspace/src/" + fileName;
+    }
+
+    public String getSourceFileContent() throws IOException, InterruptedException{
+
+        return createCodeTable(getSourceFile());
+    }
+
+
 }

@@ -125,15 +125,16 @@ public class SourceMonitorBuildAction implements HealthReportingAction, Serializ
         int averageComplexityHealth = 101;
         int minimumHealth;
         Localizable description;
+        ConfigurableParameters parameters = report.getParameters();
 
-        if (report.getMaxComplexityThresholdMaximum() > 0) {
-            maxComplexityHealth = calculateHealthReverse(maxComplexity, report.getMaxComplexityThresholdMinimum(), report.getMaxComplexityThresholdMaximum());
+        if (parameters.getMaxComplexityThresholdMaximum() > 0) {
+            maxComplexityHealth = calculateHealthReverse(maxComplexity, parameters.getMaxComplexityThresholdMinimum(), parameters.getMaxComplexityThresholdMaximum());
         }
-        if (report.getCommentCoverageThresholdMaximum() > 0) {
-            commentCoverageHealth = calculateHealth(commentCoverage, report.getCommentCoverageThresholdMinimum(), report.getCommentCoverageThresholdMaximum());
+        if (parameters.getCommentCoverageThresholdMaximum() > 0) {
+            commentCoverageHealth = calculateHealth(commentCoverage, parameters.getCommentCoverageThresholdMinimum(), parameters.getCommentCoverageThresholdMaximum());
         }
-        if (report.getAverageComplexityThresholdMaximum() > 0) {
-            averageComplexityHealth = calculateHealthReverse(averageComplexity, report.getAverageComplexityThresholdMinimum(), report.getAverageComplexityThresholdMaximum());
+        if (parameters.getAverageComplexityThresholdMaximum() > 0) {
+            averageComplexityHealth = calculateHealthReverse(averageComplexity, parameters.getAverageComplexityThresholdMinimum(), parameters.getAverageComplexityThresholdMaximum());
         }
 
         if ((maxComplexityHealth < commentCoverageHealth) && (maxComplexityHealth < averageComplexityHealth)) {

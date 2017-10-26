@@ -45,12 +45,13 @@ public class SourceMonitorResult implements Serializable {
 
     public SourceMonitorResult(SourceMonitorReport report, Run<?, ?> owner){
         this.report = report;
-        report.setParentFile(owner.getParent().getRootDir());
         this.owner = owner;
 
         ArrayList<FileStats> files = report.getDetailsFileOutput();
 
         for (int i=0; i<files.size(); i++){
+            files.get(i).setParentFile(owner.getParent().getRootDir());
+            files.get(i).setParameters(report.getParameters());
             urlKeys.put(files.get(i).getUrlTransform().toLowerCase(),files.get(i));
         }
     }
@@ -63,6 +64,7 @@ public class SourceMonitorResult implements Serializable {
         return owner;
     }
 
+    /** HTML Builders */
     public String getDetailedMetrics(){
         StringBuilder builder = new StringBuilder();
         for (int i=0; i<report.getDetailedMetrics().size();i++){
@@ -90,43 +92,22 @@ public class SourceMonitorResult implements Serializable {
             builder.append("</td>");
 
             int maxState = report.getDetailsFileOutput().get(i).getMaxStatements();
-            int paramHealth = report.getStateHealth(maxState);
-
-            if (paramHealth > 80){
-                str1 = "<td style=\"color:darkgreen\">"+maxState;
-                builder.append(str1);
-            }
-            else if(paramHealth> 60){
-                str1 = "<td style=\"color:darkorange\">"+maxState;
-                builder.append(str1);
-            }
-            else {
-                str1 = "<td style=\"color:red;font-weight:bold\">" + maxState;
-                builder.append(str1);
-            }
-
+            int paramHealth = SourceMonitorUtility.getStatementsHealth(report.getParameters(), maxState);
+            builder.append(SourceMonitorUtility.getColoredString(paramHealth, maxState));
             builder.append("</td>");
 
             int maxComp = report.getDetailsFileOutput().get(i).getMaxComplexity();
-            paramHealth = report.getCompHealth(maxComp);
-
-            if (paramHealth > 80){
-                str1 = "<td style=\"color:darkgreen\">"+maxComp;
-                builder.append(str1);
-            }
-            else if(paramHealth > 60){
-                str1 = "<td style=\"color:darkorange\">"+maxComp;
-                builder.append(str1);
-            }
-            else {
-                str1 = "<td style=\"color:red;font-weight:bold\">" + maxComp;
-                builder.append(str1);
-            }
+            paramHealth = SourceMonitorUtility.getComplexityHealth(report.getParameters(), maxComp);
+            builder.append(SourceMonitorUtility.getColoredString(paramHealth, maxComp));
             builder.append("</td></tr>");
         }
         return builder.toString();
     }
 
+    /** getDynamic Function
+     *
+     * Allows each file to display source code in new page (directs URL)
+     * */
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse resp) throws IOException {
         token = token.toLowerCase();
 

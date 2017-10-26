@@ -34,19 +34,11 @@ public class SourceMonitorReport implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private int maxComplexityThresholdMaximum = 0;
-    private int maxComplexityThresholdMinimum = 0;
-    private double averageComplexityThresholdMaximum = 0;
-    private double averageComplexityThresholdMinimum = 0;
-    private int commentCoverageThresholdMaximum = 0;
-    private int commentCoverageThresholdMinimum = 0;
-    private int maxStatementsThresholdMaximum = 0;
-    private int maxStatementsThresholdMinimum = 0;
+	private ConfigurableParameters parameters;
     private List<Map<String,String>> checkpoints;
     private Map<String, String> summaryMetrics;
     private ArrayList<FunctionStats> detailedMetrics = null;
     private ArrayList<FileStats> detailsFileOutput = null;
-    private File parentFile;
 
     private static final Map<String, String> oldMetricNames = new ImmutableMap.Builder<String, String>()
             .put("M0", "Lines")
@@ -64,14 +56,7 @@ public class SourceMonitorReport implements Serializable {
             .put("M12", "Average Complexity")
             .build();
 
-    public File getParentFile() {
-        return parentFile;
-    }
-
-    public void setParentFile(File parentFile) {
-        this.parentFile = parentFile;
-    }
-
+    /** Getters and Setters */
     public ArrayList<FunctionStats> getDetailedMetrics() {
         return detailedMetrics;
     }
@@ -80,57 +65,13 @@ public class SourceMonitorReport implements Serializable {
         this.detailedMetrics = detailedMetrics;
     }
 
-    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
-		this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
-	}
-
-    public int getMaxStatementsThresholdMaximum() {
-        return maxStatementsThresholdMaximum;
+    public ConfigurableParameters getParameters() {
+        return parameters;
     }
 
-    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
-        this.maxStatementsThresholdMaximum = maxStatementsThresholdMaximum;
+    public void setParameters(ConfigurableParameters parameters) {
+        this.parameters = parameters;
     }
-
-    public int getMaxStatementsThresholdMinimum() {
-        return maxStatementsThresholdMinimum;
-    }
-
-    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
-        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
-    }
-
-    public int getMaxComplexityThresholdMaximum() { return maxComplexityThresholdMaximum; }
-
-    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
-        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
-    }
-
-    public int getMaxComplexityThresholdMinimum() { return maxComplexityThresholdMinimum; }
-
-    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
-        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
-    }
-
-    public double getAverageComplexityThresholdMaximum() { return averageComplexityThresholdMaximum; }
-
-    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
-        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
-    }
-
-    public double getAverageComplexityThresholdMinimum() { return averageComplexityThresholdMinimum; }
-
-    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
-        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
-    }
-
-    public int getCommentCoverageThresholdMaximum() { return commentCoverageThresholdMaximum; }
-
-    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
-        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
-    }
-
-    public int getCommentCoverageThresholdMinimum() { return commentCoverageThresholdMinimum; }
 
     @Deprecated
     public List<Map<String,String>> getCheckpoints() {
@@ -162,6 +103,7 @@ public class SourceMonitorReport implements Serializable {
         this.detailsFileOutput = detailsFileOutput;
     }
 
+    /** Other Functions */
     private Map<String, String> buildSummaryMetricsFromCheckpoints() {
         Map<String, String> summaryMetrics = new HashMap<String, String>();
 
@@ -177,39 +119,5 @@ public class SourceMonitorReport implements Serializable {
         }
 
         return summaryMetrics;
-    }
-
-    public int getCompHealth(int maxComp){
-        int max = maxComplexityThresholdMaximum;
-        int min = maxComplexityThresholdMinimum;
-        int paramHealth = 0;
-
-        if (maxComp < min){
-            paramHealth = 100;
-        }
-        else if (maxComp > max){
-            paramHealth = 0;
-        }
-        else{
-            paramHealth = (max-maxComp)*100/(max - min);
-        }
-        return paramHealth;
-    }
-
-    public int getStateHealth(int maxState){
-        int max = maxStatementsThresholdMaximum;
-        int min = maxStatementsThresholdMinimum;
-        int paramHealth = 0;
-
-        if (maxState < min){
-            paramHealth = 100;
-        }
-        else if (maxState > max){
-            paramHealth = 0;
-        }
-        else{
-            paramHealth = (max-maxState)*100/(max - min);
-        }
-        return paramHealth;
     }
 }

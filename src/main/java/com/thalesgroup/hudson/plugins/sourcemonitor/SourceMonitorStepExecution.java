@@ -48,17 +48,10 @@ public class SourceMonitorStepExecution extends SynchronousNonBlockingStepExecut
 
         listener.getLogger().println("Running Source Monitor Parser step.");
 
-        SourceMonitorPublisher publisher = new SourceMonitorPublisher(step.getSummaryFilePath(),step.getDetailsFilePath());
+        SourceMonitorPublisher publisher = new SourceMonitorPublisher();
 
         // Set the parameters for the health metrics.
-        publisher.setAverageComplexityThresholdMaximum(step.getAverageComplexityThresholdMaximum());
-        publisher.setAverageComplexityThresholdMinimum(step.getAverageComplexityThresholdMinimum());
-        publisher.setCommentCoverageThresholdMaximum(step.getCommentCoverageThresholdMaximum());
-        publisher.setCommentCoverageThresholdMinimum(step.getCommentCoverageThresholdMinimum());
-        publisher.setMaxComplexityThresholdMaximum(step.getMaxComplexityThresholdMaximum());
-        publisher.setMaxComplexityThresholdMinimum(step.getMaxComplexityThresholdMinimum());
-        publisher.setMaxStatementsThresholdMaximum(step.getMaxStatementsThresholdMaximum());
-        publisher.setMaxStatementsThresholdMinimum(step.getMaxStatementsThresholdMinimum());
+        publisher.setParameters(step.getParameters());
 
         publisher.perform(build, ws, launcher, listener);
 

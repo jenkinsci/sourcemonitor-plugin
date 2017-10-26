@@ -48,98 +48,47 @@ import org.jenkinsci.remoting.RoleChecker;
 public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorReport> {
     private static final long serialVersionUID = 1L;
 
-    private int maxComplexityThresholdMaximum = 0;
-    private int maxComplexityThresholdMinimum = 0;
-    private double averageComplexityThresholdMaximum = 0;
-    private double averageComplexityThresholdMinimum = 0;
-    private int commentCoverageThresholdMaximum = 0;
-    private int commentCoverageThresholdMinimum = 0;
-    private final FilePath summaryFilePath;
-    private final FilePath detailsFilePath;
-    private int maxStatementsThresholdMaximum = 0;
-    private int maxStatementsThresholdMinimum = 0;
+    private ConfigurableParameters parameters;
     private static final Logger LOGGER = Logger.getLogger(SourceMonitorParser.class.getName());
 
-    public SourceMonitorParser(FilePath summaryFilePath) {
-        this.summaryFilePath = summaryFilePath;
-        this.detailsFilePath = null;
+    @Override
+    public void checkRoles(RoleChecker checker) throws SecurityException {
     }
 
     public SourceMonitorParser(){
-        this.summaryFilePath = null;
-        this.detailsFilePath = null;
     }
 
-    public SourceMonitorParser(FilePath summaryFilePath, FilePath detailsFilePath){
-        this.summaryFilePath = summaryFilePath;
-        this.detailsFilePath = detailsFilePath;
+    /** Getters and Setters */
+    public ConfigurableParameters getParameters() {
+        return parameters;
     }
 
+    public void setParameters(ConfigurableParameters parameters) {
+        this.parameters = parameters;
+    }
+
+    /** Invoke Method */
     public SourceMonitorReport invoke(java.io.File workspace, VirtualChannel channel) throws IOException {
 
         SourceMonitorReport sourceMonitorReport = new SourceMonitorReport();
 
-        if (detailsFilePath != null){
+        if (parameters.getDetailsFilePath() != null){
             parseDetailsFile(sourceMonitorReport);
         }
 
         parseSummaryFile(sourceMonitorReport);
-        setHealthParameters(sourceMonitorReport);
+        sourceMonitorReport.setParameters(parameters);
 
         return sourceMonitorReport;
     }
 
-    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
-        this.maxStatementsThresholdMaximum = maxStatementsThresholdMaximum;
-    }
-
-    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
-        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
-    }
-
     /** Parsing Helper Methods */
-
-    private void parseDetailsFile(SourceMonitorReport sourceMonitorReport) throws IOException{
-        Document document;
-
-        try {
-            SAXBuilder sxb = new SAXBuilder();
-            document = sxb.build(new InputStreamReader(new FileInputStream(new File(detailsFilePath.toURI())), "UTF-8"));
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Parsing file error :" + e.toString());
-            throw new AbortException("Parsing file error");
-        }
-
-        ArrayList<FileStats> detailsFileOutput = new ArrayList<FileStats>();
-
-        Element projectElt = getProject(document);
-
-        List<?> checkpointsEltList = getCheckpointsList(projectElt);
-
-        for (int i = 0; i < checkpointsEltList.size(); i++) {
-            Element checkpoint = (Element) checkpointsEltList.get(i);
-            Element files = checkpoint.getChild("files");
-            List<?> fileEltList = files.getChildren("file");
-
-            int numFiles = Integer.parseInt(files.getAttributeValue("file_count"));
-
-            for (int j = 0; j < numFiles; j++) {
-                FileStats newFile = getFileStats(sourceMonitorReport, (Element) fileEltList.get(j));
-                if (newFile != null){
-                    detailsFileOutput.add(newFile);
-                }
-            }
-        }
-
-        sourceMonitorReport.setDetailsFileOutput(detailsFileOutput);
-    }
-
     private void parseSummaryFile(SourceMonitorReport sourceMonitorReport) throws IOException{
         Document document;
 
         try {
             SAXBuilder sxb2 = new SAXBuilder();
-            document = sxb2.build(new InputStreamReader(new FileInputStream(new File(summaryFilePath.toURI())), "UTF-8"));
+            document = sxb2.build(new InputStreamReader(new FileInputStream(new File(parameters.getSummaryFilePath().toURI())), "UTF-8"));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Parsing file error :" + e.toString());
             throw new AbortException("Parsing file error");
@@ -163,22 +112,102 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         sourceMonitorReport.setDetailedMetrics(detailedMetrics);
     }
 
-    private void setHealthParameters(SourceMonitorReport sourceMonitorReport) {
-        // Set the parameters for the health metrics.
-        sourceMonitorReport.setAverageComplexityThresholdMaximum(averageComplexityThresholdMaximum);
-        sourceMonitorReport.setAverageComplexityThresholdMinimum(averageComplexityThresholdMinimum);
-        sourceMonitorReport.setCommentCoverageThresholdMaximum(commentCoverageThresholdMaximum);
-        sourceMonitorReport.setCommentCoverageThresholdMinimum(commentCoverageThresholdMinimum);
-        sourceMonitorReport.setMaxComplexityThresholdMaximum(maxComplexityThresholdMaximum);
-        sourceMonitorReport.setMaxComplexityThresholdMinimum(maxComplexityThresholdMinimum);
-        sourceMonitorReport.setMaxStatementsThresholdMaximum(maxStatementsThresholdMaximum);
-        sourceMonitorReport.setMaxStatementsThresholdMinimum(maxStatementsThresholdMinimum);
+    private Element getProject(Document document) {
+        Element root = document.getRootElement();
+        return root.getChild("project");
     }
 
-    private FileStats getFileStats(SourceMonitorReport report, Element fileElt){
-        FileStats newFile = new FileStats(report);
+
+
+    private List<?> getCheckpointsList(Element project) {
+        Element checkpoints = project.getChild("checkpoints");
+        List<?> checkpointsList = checkpoints.getChildren();
+        return checkpointsList;
+    }
+
+    private Map<String,String> buildMetricNameMap(Element project) {
+        Map<String,String> metricNameMap = new HashMap<String, String>();
+
+        // Parse the Metric Names.
+        Element metricNames = project.getChild("metric_names");
+        List<?> metricNamesEltList = metricNames.getChildren();
+        for (int i = 0; i < metricNamesEltList.size(); i++) {
+            Element metricNameElt = (Element) metricNamesEltList.get(i);
+            metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
+        }
+
+        return metricNameMap;
+    }
+
+    private void populateSummaryMap(Element checkpoint, Map<String, String> metricsSummaryMap, Map<String, String> metricNameMap) {
+        Element metricsElt = checkpoint.getChild("metrics");
+        List<?> metricsEltList = metricsElt.getChildren();
+        for (int i = 0; i < metricsEltList.size(); i++) {
+            Element metricElt = (Element) metricsEltList.get(i);
+            metricsSummaryMap.put(metricNameMap.get(metricElt.getAttributeValue("id")), metricElt.getValue());
+        }
+    }
+
+    private void populateDetailList(Element checkpoint, List<FunctionStats> detailedMetrics) {
+        Element functionMetrics = checkpoint.getChild("function_metrics");
+        List<?> functionMetricsEltList = functionMetrics.getChildren("function");
+        int numFunctions = Integer.parseInt(functionMetrics.getAttributeValue("function_count"));
+
+        for (int i = 0; i < numFunctions; i++) {
+            detailedMetrics.add(getFunctionStats((Element) functionMetricsEltList.get(i)));
+        }
+    }
+
+    private FunctionStats getFunctionStats(Element function) {
+        int complexity = Integer.parseInt(function.getChild("complexity").getValue());
+        int statements = Integer.parseInt(function.getChild("statements").getValue());
+        String name = function.getAttributeValue("name");
+        FunctionStats functionDetails = new FunctionStats(complexity, statements, name);
+
+        return functionDetails;
+    }
+
+    private void parseDetailsFile(SourceMonitorReport sourceMonitorReport) throws IOException{
+        Document document;
+
+        try {
+            SAXBuilder sxb = new SAXBuilder();
+            document = sxb.build(new InputStreamReader(new FileInputStream(new File(parameters.getDetailsFilePath().toURI())), "UTF-8"));
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Parsing file error :" + e.toString());
+            throw new AbortException("Parsing file error");
+        }
+
+        ArrayList<FileStats> detailsFileOutput = new ArrayList<FileStats>();
+
+        Element projectElt = getProject(document);
+
+        List<?> checkpointsEltList = getCheckpointsList(projectElt);
+
+        for (int i = 0; i < checkpointsEltList.size(); i++) {
+            Element checkpoint = (Element) checkpointsEltList.get(i);
+            Element files = checkpoint.getChild("files");
+            List<?> fileEltList = files.getChildren("file");
+
+            int numFiles = Integer.parseInt(files.getAttributeValue("file_count"));
+
+            for (int j = 0; j < numFiles; j++) {
+                FileStats newFile = getFileStats((Element) fileEltList.get(j));
+                if (newFile != null){
+                    detailsFileOutput.add(newFile);
+                }
+            }
+        }
+
+        sourceMonitorReport.setDetailsFileOutput(detailsFileOutput);
+    }
+
+    private FileStats getFileStats(Element fileElt){
+        FileStats newFile = new FileStats();
 
         newFile.setFileName(fileElt.getAttributeValue("file_name").replace('\\','/'));
+
+        newFile.setParameters(parameters);
 
         Element functionMetricsElt = fileElt.getChild("function_metrics");
         Element metricsElt = fileElt.getChild("metrics");
@@ -220,96 +249,5 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             Element function = (Element)functionEltList.get(i);
             newFile.addFunction(getFunctionStats(function));
         }
-    }
-
-    private FunctionStats getFunctionStats(Element function) {
-        int complexity = Integer.parseInt(function.getChild("complexity").getValue());
-        int statements = Integer.parseInt(function.getChild("statements").getValue());
-        String name = function.getAttributeValue("name");
-        FunctionStats functionDetails = new FunctionStats(complexity, statements, name);
-
-        return functionDetails;
-    }
-
-    private Element getProject(Document document) {
-        Element root = document.getRootElement();
-        return root.getChild("project");
-    }
-
-    private Map<String,String> buildMetricNameMap(Element project) {
-        Map<String,String> metricNameMap = new HashMap<String, String>();
-
-        // Parse the Metric Names.
-        Element metricNames = project.getChild("metric_names");
-        List<?> metricNamesEltList = metricNames.getChildren();
-        for (int i = 0; i < metricNamesEltList.size(); i++) {
-            Element metricNameElt = (Element) metricNamesEltList.get(i);
-            metricNameMap.put(metricNameElt.getAttributeValue("id"), metricNameElt.getValue());
-        }
-
-        return metricNameMap;
-    }
-
-    private List<?> getCheckpointsList(Element project) {
-        Element checkpoints = project.getChild("checkpoints");
-        List<?> checkpointsList = checkpoints.getChildren();
-        return checkpointsList;
-    }
-
-    private void populateSummaryMap(Element checkpoint, Map<String, String> metricsSummaryMap, Map<String, String> metricNameMap) {
-        Element metricsElt = checkpoint.getChild("metrics");
-        List<?> metricsEltList = metricsElt.getChildren();
-        for (int i = 0; i < metricsEltList.size(); i++) {
-            Element metricElt = (Element) metricsEltList.get(i);
-            metricsSummaryMap.put(metricNameMap.get(metricElt.getAttributeValue("id")), metricElt.getValue());
-        }
-    }
-
-    private void populateDetailList(Element checkpoint, List<FunctionStats> detailedMetrics) {
-        Element functionMetrics = checkpoint.getChild("function_metrics");
-        List<?> functionMetricsEltList = functionMetrics.getChildren("function");
-        int numFunctions = Integer.parseInt(functionMetrics.getAttributeValue("function_count"));
-
-        for (int i = 0; i < numFunctions; i++) {
-            detailedMetrics.add(getFunctionStats((Element) functionMetricsEltList.get(i)));
-        }
-    }
-
-    /** Getters and Setters */
-
-    public FilePath getSummaryFilePath() {
-        return summaryFilePath;
-    }
-
-    public FilePath getDetailsFilePath() {
-        return detailsFilePath;
-    }
-
-    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
-        this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
-    }
-
-    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
-        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
-    }
-
-    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
-        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
-    }
-
-    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
-        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
-    }
-
-    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
-        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
-    }
-
-    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
-        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
-    }
-
-    @Override
-    public void checkRoles(RoleChecker checker) throws SecurityException {
     }
 }

@@ -126,17 +126,25 @@ public class SourceMonitorStep extends Step {
     public int getCommentCoverageThresholdMinimum() {
         return commentCoverageThresholdMinimum;
     }
-
     public int getMaxStatementsThresholdMaximum() {
         return maxStatementsThresholdMaximum;
     }
-
     public int getMaxStatementsThresholdMinimum() {
         return maxStatementsThresholdMinimum;
     }
-
     public String getDetailsFilePath() {
         return detailsFilePath;
+    }
+
+    public ConfigurableParameters getParameters(){
+        ConfigurableParameters parameters = new ConfigurableParameters(null, null, maxComplexityThresholdMaximum,
+                maxComplexityThresholdMinimum, averageComplexityThresholdMaximum, averageComplexityThresholdMinimum,
+                commentCoverageThresholdMaximum, commentCoverageThresholdMinimum, maxStatementsThresholdMaximum,
+                maxStatementsThresholdMinimum);
+        parameters.setRelativeDetailsString(detailsFilePath);
+        parameters.setRelativeSummaryString(summaryFilePath);
+
+        return parameters;
     }
 
     @Override
