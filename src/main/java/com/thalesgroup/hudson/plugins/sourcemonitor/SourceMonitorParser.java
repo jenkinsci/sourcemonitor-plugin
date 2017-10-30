@@ -183,6 +183,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         ArrayList<FileStats> detailsFileOutput = new ArrayList<FileStats>();
 
         Element projectElt = getProject(document);
+        String sourceFilePath = projectElt.getChild("project_directory").getValue().replace('\\','/');
 
         List<?> checkpointsEltList = getCheckpointsList(projectElt);
 
@@ -194,7 +195,7 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
             int numFiles = Integer.parseInt(files.getAttributeValue("file_count"));
 
             for (int j = 0; j < numFiles; j++) {
-                FileStats newFile = getFileStats((Element) fileEltList.get(j));
+                FileStats newFile = getFileStats((Element) fileEltList.get(j), sourceFilePath);
                 if (newFile != null){
                     detailsFileOutput.add(newFile);
                 }
@@ -204,12 +205,13 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         sourceMonitorReport.setDetailsFileOutput(detailsFileOutput);
     }
 
-    private FileStats getFileStats(Element fileElt){
+    private FileStats getFileStats(Element fileElt, String sourceFilePath){
         FileStats newFile = new FileStats();
 
         newFile.setFileName(fileElt.getAttributeValue("file_name").replace('\\','/'));
 
         newFile.setParameters(parameters);
+        newFile.setSourceFilePath(sourceFilePath);
 
         Element functionMetricsElt = fileElt.getChild("function_metrics");
         Element metricsElt = fileElt.getChild("metrics");

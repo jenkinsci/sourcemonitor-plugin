@@ -53,7 +53,6 @@ public class SourceMonitorResult implements Serializable {
             ArrayList<FileStats> files = report.getDetailsFileOutput();
 
             for (int i = 0; i < files.size(); i++) {
-                files.get(i).setParentFile(owner.getParent().getRootDir());
                 files.get(i).setParameters(report.getParameters());
                 urlKeys.put(files.get(i).getUrlTransform().toLowerCase(), files.get(i));
             }

@@ -17,7 +17,7 @@ public class FileStats implements Serializable {
     private int numStatements;
     private int maxComplexity;
     private int maxStatements;
-    private File parentFile;
+    private String sourceFilePath;
     private ConfigurableParameters parameters;
     private ArrayList<FunctionStats> functionStats;
 
@@ -80,8 +80,8 @@ public class FileStats implements Serializable {
         this.parameters = parameters;
     }
 
-    public void setParentFile(File parentFile) {
-        this.parentFile = parentFile;
+    public void setSourceFilePath(String sourceFilePath) {
+        this.sourceFilePath = sourceFilePath;
     }
     //endregion
 
@@ -148,11 +148,11 @@ public class FileStats implements Serializable {
 
     private File getSourceFile() throws IOException, InterruptedException{
 
-        return new File(parentFile, "/workspace/src/" + fileName);
+        return new File(getStringPath());
     }
 
     private String getStringPath(){
-        return parentFile.getPath() +"/workspace/src/" + fileName;
+        return sourceFilePath + "/" + fileName;
     }
 
     public String getSourceFileContent() throws IOException, InterruptedException{
