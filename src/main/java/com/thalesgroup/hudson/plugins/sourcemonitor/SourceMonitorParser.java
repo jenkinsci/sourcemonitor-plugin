@@ -219,7 +219,9 @@ public class SourceMonitorParser implements FilePath.FileCallable<SourceMonitorR
         populateFileMetrics(newFile, metricsElt);
 
         if (newFile.getNumFunctions() != 0){
-            populateFileFunctions(newFile, functionMetricsElt);
+            try {
+                populateFileFunctions(newFile, functionMetricsElt);
+            }catch(NullPointerException e){}
         }
         else{
             newFile = null;
