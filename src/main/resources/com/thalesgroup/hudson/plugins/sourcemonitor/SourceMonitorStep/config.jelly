@@ -1,3 +1,4 @@
+<!--
 /*******************************************************************************
 * Copyright (c) 2009 Thales Corporate Services SAS                             *
 * Author : Gregory Boissinot                                                   *
@@ -20,54 +21,39 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN    *
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-package com.thalesgroup.hudson.plugins.sourcemonitor;
+	<f:entry field="summaryFilePath" title="${%SourceMonitor summary metric file path}">
+		<f:textbox name="summaryFilePath" value="${instance.summaryFilePath}"/>
+	</f:entry>
+	<f:entry field = "detailsFilePath" title="${%SourceMonitor detailed metric file path}">
+		<f:textbox name="detailsFilePath" value="${instance.detailsFilePath}"/>
+	</f:entry>
+	<f:entry field="maxComplexityThresholdMaximum" title="${%Max complexity maximum threshold}">
+		<f:number default="10" min="0" step="1" size="10"/>
+	</f:entry>
+	<f:entry field="maxComplexityThresholdMinimum" title="${%Max complexity minimum threshold}">
+		<f:number default="0" min="0" step="1" size="10"/>
+	</f:entry>
+	<f:entry field="averageComplexityThresholdMaximum" title="${%Average complexity maximum threshold}">
+		<f:number default="10" min="0" step="0.1" size="10"/>
+	</f:entry>
+	<f:entry field="averageComplexityThresholdMinimum" title="${%Average complexity minimum threshold}">
+		<f:number default="0" min="0" step="0.1" size="10"/>
+	</f:entry>
+	<f:entry field="commentCoverageThresholdMaximum" title="${%Comment coverage maximum threshold}">
+		<f:number default="50" min="0" step="1" size="10"/>
+	</f:entry>
+	<f:entry field="commentCoverageThresholdMinimum" title="${%Comment coverage minimum threshold}">
+		<f:number default="0" min="0" step="1" size="10"/>
+	</f:entry>
+    <f:entry field ="maxStatementsThresholdMaximum" title="${%Max Statements maximum threshold}">
+        <f:number default="0" min="0" step="1" size="10"/>
+    </f:entry>
+    <f:entry field ="maxStatementsThresholdMinimum" title="${%Max Statements minimum threshold}">
+		<f:number default="0" min="0" step="1" size="10"/>
+	</f:entry>
 
-import hudson.util.StackedAreaRenderer2;
-import hudson.util.ChartUtil.NumberOnlyBuildLabel;
-
-import org.jfree.data.category.CategoryDataset;
-
-/**
- * Renderer that provides direct access to the individual results of a build via
- * links. This renderer does not render tooltips, these need to be defined in
- * sub-classes.
- */
-public class SourceMonitorRenderer extends StackedAreaRenderer2 {
-    /** Unique identifier of this class. */
-    private static final long serialVersionUID = 1440842055316682192L;
-    /** Base URL of the graph links. */
-    private final String url;
-
-    /**
-     * Creates a new instance of <code>AbstractAreaRenderer</code>.
-     *
-     * @param url
-     *            base URL of the graph links
-     * @param toolTipProvider
-     *            tooltip provider for the clickable map
-     */
-    public SourceMonitorRenderer(final String url) {
-        super();
-        this.url = "/" + url + "/";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String generateURL(final CategoryDataset dataset, final int row, final int column) {
-        return getLabel(dataset, column).build.getNumber() + url;
-    }
-
-    /**
-     * Returns the Hudson build label at the specified column.
-     *
-     * @param dataset
-     *            data set of values
-     * @param column
-     *            the column
-     * @return the label of the column
-     */
-    private NumberOnlyBuildLabel getLabel(final CategoryDataset dataset, final int column) {
-        return (NumberOnlyBuildLabel)dataset.getColumnKey(column);
-    }
-}
+</j:jelly>

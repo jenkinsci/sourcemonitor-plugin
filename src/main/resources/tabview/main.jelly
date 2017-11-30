@@ -22,6 +22,7 @@
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
 -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
   xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
   xmlns:i="jelly:fmt" xmlns:local="local">
@@ -30,11 +31,12 @@
     
       <j:choose>
 		<br/>    	    		
-        <j:when test="${it.report.checkpoints == null}">
+        <j:when test="${it.report.summaryMetrics == null}">
             <div>Not available</div>
         </j:when>
         <j:otherwise>
-    		<st:include page="summary.jelly" /> 
+    		<st:include page="summary.jelly" />
+            <st:include page="details.jelly" />
         </j:otherwise>
 	  </j:choose> 
 

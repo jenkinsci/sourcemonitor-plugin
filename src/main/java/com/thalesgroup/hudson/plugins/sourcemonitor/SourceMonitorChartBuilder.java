@@ -24,11 +24,14 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
+import hudson.model.AbstractBuild;
+import hudson.util.ChartUtil;
 import hudson.util.DataSetBuilder;
 import hudson.util.ShiftedCategoryAxis;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
 import java.awt.Color;
+import java.lang.reflect.InvocationTargetException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -51,7 +54,7 @@ public class SourceMonitorChartBuilder {
     }
 
     public static JFreeChart buildChart(SourceMonitorBuildAction action){
-        JFreeChart chart = ChartFactory.createStackedAreaChart(null, null, "Number of errors", buildDataset(action), PlotOrientation.VERTICAL, true, false, true);
+        JFreeChart chart = ChartFactory.createStackedAreaChart(null, null, "See Legend", buildDataSet(action), PlotOrientation.VERTICAL, true, false, true);
 
         chart.setBackgroundPaint(Color.white);
 
@@ -74,16 +77,13 @@ public class SourceMonitorChartBuilder {
         // crop extra space around the graph
         plot.setInsets(new RectangleInsets(0, 0, 0, 5.0));
 
-        
         CategoryItemRenderer firstRender= new DefaultCategoryItemRenderer();
-        SourceMonitorRenderer renderer = new SourceMonitorRenderer(action.getUrlName());
-        plot.setRenderer(firstRender); 
-        
+        plot.setRenderer(firstRender);
 
         return chart;
     }
 
-    private static CategoryDataset buildDataset(SourceMonitorBuildAction lastAction){
+    private static CategoryDataset buildDataSet(SourceMonitorBuildAction lastAction){
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
 
         SourceMonitorBuildAction action = lastAction;
@@ -92,17 +92,18 @@ public class SourceMonitorChartBuilder {
             if(result != null){
                 SourceMonitorReport report = result.getReport();
                 NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(action.getBuild());
-                if (report.getCheckpoints().get(0).get("M0") ==null)
-                	builder.add(0, "Number of Lines", buildLabel);
-                else
-                	builder.add(Integer.parseInt(report.getCheckpoints().get(0).get("M0")), "Number of Lines", buildLabel);
+                if (report.getSummaryMetrics().size() == 0) {
+                    builder.add(0, "Number of Lines", buildLabel);
+                }
+                else {
+                    builder.add(Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments")), "Percent Lines with comments", buildLabel);
+                    builder.add(Integer.parseInt(report.getSummaryMetrics().get("Complexity of Most Complex Function")), "Complexity of Most Complex Function", buildLabel);
+                    builder.add(Double.parseDouble(report.getSummaryMetrics().get("Average Complexity")), "Average Complexity", buildLabel);
+                }
             }
             action = action.getPreviousAction();
         }while(action != null);
 
         return builder.build();
     }
-    
-
-    
 }

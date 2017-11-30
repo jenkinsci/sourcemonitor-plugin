@@ -22,13 +22,14 @@
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
 -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
     <j:if test="${from.hasValidResults()}">
 	    <div align="right">
           <p/>
 		  <div class="test-trend-caption">SourceMonitor Trend</div>
 		  <div>
-		    <img src="${from.urlName}/trend" lazymap="${from.urlName}/trendMap"/>
+		    <img src="${from.urlName}/trend"/>
 		  </div>
 	   	</div>
 	</j:if>

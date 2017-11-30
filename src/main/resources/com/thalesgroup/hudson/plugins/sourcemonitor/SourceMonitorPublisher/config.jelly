@@ -22,11 +22,39 @@
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
 -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:u="/util">
 
 	<f:entry title="${%SourceMonitor summary metric file path}">
 		<f:textbox name="summaryFilePath" value="${instance.summaryFilePath}"/>
+	</f:entry>
+	<f:entry title="${%SourceMonitor detailed metric file path}">
+		<f:textbox name="detailsFilePath" value="${instance.detailsFilePath}"/>
+	</f:entry>
+	<f:entry title="${%Max complexity maximum threshold}">
+		<f:textbox name="maxComplexityThresholdMaximum" value="${instance.maxComplexityThresholdMaximum}"/>
+	</f:entry>
+	<f:entry title="${%Max complexity minimum threshold}">
+		<f:textbox name="maxComplexityThresholdMinimum" value="${instance.maxComplexityThresholdMinimum}"/>
+	</f:entry>
+	<f:entry title="${%Average complexity maximum threshold}">
+		<f:textbox name="averageComplexityThresholdMaximum" value="${instance.averageComplexityThresholdMaximum}"/>
+	</f:entry>
+	<f:entry title="${%Average complexity minimum threshold}">
+		<f:textbox name="averageComplexityThresholdMinimum" value="${instance.averageComplexityThresholdMinimum}"/>
+	</f:entry>
+	<f:entry title="${%Comment coverage maximum threshold}">
+		<f:textbox name="commentCoverageThresholdMaximum" value="${instance.commentCoverageThresholdMaximum}"/>
+	</f:entry>
+	<f:entry title="${%Comment coverage minimum threshold}">
+		<f:textbox name="commentCoverageThresholdMinimum" value="${instance.commentCoverageThresholdMinimum}"/>
+	</f:entry>
+    <f:entry title="${%Max Statements maximum threshold}">
+        <f:textbox name="maxStatementsThresholdMaximum" value="${instance.maxStatementsThresholdMaximum}"/>
+    </f:entry>
+    <f:entry title="${%Max Statements minimum threshold}">
+		<f:textbox name="maxStatementsThresholdMinimum" value="${instance.maxStatementsThresholdMinimum}"/>
 	</f:entry>
 
 </j:jelly>

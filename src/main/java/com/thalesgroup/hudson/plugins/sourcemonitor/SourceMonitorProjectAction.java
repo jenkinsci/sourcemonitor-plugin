@@ -23,26 +23,28 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
+import hudson.model.*;
 import hudson.util.ChartUtil;
 import java.io.IOException;
 import java.io.Serializable;
+
+import hudson.util.Graph;
+import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 
 public class SourceMonitorProjectAction implements Action, Serializable {
-    
+    private static final long serialVersionUID = 1L;
+
     public static final String URL_NAME = "sourceMonitorResult";
 
     public static final int CHART_WIDTH = 500;
     public static final int CHART_HEIGHT = 200;
 
-    public AbstractProject<?,?> project;
+    public Job<?,?> project;
 
-    public SourceMonitorProjectAction(final AbstractProject<?, ?> project) {
+    public SourceMonitorProjectAction(final Job<?, ?> project) {
         this.project = project;
     }
 
@@ -70,7 +72,7 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      *             in case of an error
      */
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?, ?> build = getLastFinishedBuild();
+        Run<?, ?> build = getLastFinishedBuild();
         if (build != null) {
             response.sendRedirect2(String.format("../%d/%s", build.getNumber(), SourceMonitorBuildAction.URL_NAME));
         }
@@ -82,8 +84,8 @@ public class SourceMonitorProjectAction implements Action, Serializable {
      * @return the last finished build or <code>null</code> if there is no
      *         such build
      */
-    public AbstractBuild<?, ?> getLastFinishedBuild() {
-        AbstractBuild<?, ?> lastBuild = project.getLastBuild();
+    public Run<?, ?> getLastFinishedBuild() {
+        Run<?, ?> lastBuild = project.getLastBuild();
         while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(SourceMonitorBuildAction.class) == null)) {
             lastBuild = lastBuild.getPreviousBuild();
         }
@@ -91,7 +93,7 @@ public class SourceMonitorProjectAction implements Action, Serializable {
     }
 
     public final boolean hasValidResults() {
-        AbstractBuild<?, ?> build = getLastFinishedBuild();
+        Run<?, ?> build = getLastFinishedBuild();
         if (build != null) {
             SourceMonitorBuildAction resultAction = build.getAction(SourceMonitorBuildAction.class);
             if (resultAction != null) {
@@ -102,49 +104,24 @@ public class SourceMonitorProjectAction implements Action, Serializable {
     }
 
     /**
-     * Display the trend map. Delegates to the the associated
-     * {@link ResultAction}.
+     * Display the trend graph.
      *
      * @param request
      *            Stapler request
      * @param response
      *            Stapler response
      * @throws IOException
-     *             in case of an error
-     */
-    public void doTrendMap(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?,?> lastBuild = this.getLastFinishedBuild();
-        SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
-
-        ChartUtil.generateClickableMap(
-                request,
-                response,
-                SourceMonitorChartBuilder.buildChart(lastAction),
-                CHART_WIDTH,
-                CHART_HEIGHT);
-    }
-
-    /**
-     * Display the trend graph. Delegates to the the associated
-     * {@link ResultAction}.
-     *
-     * @param request
-     *            Stapler request
-     * @param response
-     *            Stapler response
-     * @throws IOException
-     *             in case of an error in
-     *             {@link ResultAction#doGraph(StaplerRequest, StaplerResponse, int)}
+     *             in case of an error in ResultAction#doGraph(StaplerRequest, StaplerResponse, int)
      */
     public void doTrend(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        AbstractBuild<?,?> lastBuild = this.getLastFinishedBuild();
-        SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
+        Run<?,?> lastBuild = this.getLastFinishedBuild();
+        final SourceMonitorBuildAction lastAction = lastBuild.getAction(SourceMonitorBuildAction.class);
 
-        ChartUtil.generateGraph(
-                request,
-                response,
-                SourceMonitorChartBuilder.buildChart(lastAction),
-                CHART_WIDTH,
-                CHART_HEIGHT);
+        new Graph(lastBuild.getTimestamp(), CHART_WIDTH, CHART_HEIGHT) {
+            @Override
+            protected JFreeChart createGraph() {
+                return SourceMonitorChartBuilder.buildChart(lastAction);
+            }
+        }.doPng(request, response);
     }
 }

@@ -25,11 +25,7 @@ package com.thalesgroup.hudson.plugins.sourcemonitor;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
 
@@ -37,23 +33,164 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 
+import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 
-public class SourceMonitorPublisher extends Recorder implements Serializable{
-
+@SuppressWarnings("unchecked")
+public class SourceMonitorPublisher extends Recorder implements Serializable, SimpleBuildStep {
     private static final long serialVersionUID = 1L;
 
-    private final String summaryFilePath;
-    
+    private String summaryFilePath = null;
+    private String detailsFilePath = null;
+    private int maxComplexityThresholdMaximum = 0;
+    private int maxComplexityThresholdMinimum = 0;
+    private double averageComplexityThresholdMaximum = 0;
+    private double averageComplexityThresholdMinimum = 0;
+    private int commentCoverageThresholdMaximum = 0;
+    private int commentCoverageThresholdMinimum = 0;
+    private int maxStatementsThresholdMaximum = 0;
+    private int maxStatementsThresholdMinimum = 0;
+    private ConfigurableParameters parameters = null;
+
     @DataBoundConstructor
-    public SourceMonitorPublisher(String summaryFilePath){
+    public SourceMonitorPublisher(){
+
+    }
+
+    //region Getters and Setters
+    public String getSummaryFilePath() {
+		return summaryFilePath;
+	}
+
+	public void setParameters(ConfigurableParameters parameters){
+        this.parameters = parameters;
+    }
+
+    @DataBoundSetter
+    public void setMaxComplexityThresholdMaximum(int maxComplexityThresholdMaximum) {
+        this.maxComplexityThresholdMaximum = maxComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setSummaryFilePath(String summaryFilePath) {
         this.summaryFilePath = summaryFilePath;
     }
 
+    @DataBoundSetter
+    public void setDetailsFilePath(String detailsFilePath) {
+        this.detailsFilePath = detailsFilePath;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMinimum(int maxStatementsThresholdMinimum) {
+        this.maxStatementsThresholdMinimum = maxStatementsThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setMaxStatementsThresholdMaximum(int maxStatementsThresholdMaximum) {
+        this.maxStatementsThresholdMaximum= maxStatementsThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setMaxComplexityThresholdMinimum(int maxComplexityThresholdMinimum) {
+        this.maxComplexityThresholdMinimum = maxComplexityThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setAverageComplexityThresholdMaximum(double averageComplexityThresholdMaximum) {
+        this.averageComplexityThresholdMaximum = averageComplexityThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setAverageComplexityThresholdMinimum(double averageComplexityThresholdMinimum) {
+        this.averageComplexityThresholdMinimum = averageComplexityThresholdMinimum;
+    }
+
+    @DataBoundSetter
+    public void setCommentCoverageThresholdMaximum(int commentCoverageThresholdMaximum) {
+        this.commentCoverageThresholdMaximum = commentCoverageThresholdMaximum;
+    }
+
+    @DataBoundSetter
+    public void setCommentCoverageThresholdMinimum(int commentCoverageThresholdMinimum) {
+        this.commentCoverageThresholdMinimum = commentCoverageThresholdMinimum;
+    }
+    //endregion
+
     @Override
-    public Action getProjectAction(AbstractProject<?,?> project){
-        return new SourceMonitorProjectAction(project);
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        if(this.canContinue(run.getResult())){
+
+            listener.getLogger().println("Parsing sourcemonitor results");
+            SourceMonitorParser parser = new SourceMonitorParser();
+
+            PrintStream logger = listener.getLogger();
+
+            // Set the parameters for the health metrics.
+            // If configurable parameters object isnt set by step, create one
+            if (parameters == null){
+
+                FilePath summary = null;
+                if ((summaryFilePath != null)&&(!summaryFilePath.isEmpty())){
+                    summary = new FilePath(filePath, summaryFilePath);
+                }
+                FilePath details = null;
+                if ((detailsFilePath != null) && (!detailsFilePath.isEmpty())){
+                    details = new FilePath(filePath, detailsFilePath);
+                }
+                parameters = new ConfigurableParameters(summary, details, maxComplexityThresholdMaximum,
+                        maxComplexityThresholdMinimum, averageComplexityThresholdMaximum, averageComplexityThresholdMinimum,
+                        commentCoverageThresholdMaximum, commentCoverageThresholdMinimum, maxStatementsThresholdMaximum,
+                        maxStatementsThresholdMinimum);
+            }
+            // if step set the configurable parameters object, create file paths
+            else
+            {
+                // step does not have access to the base file path so it populates string relative paths
+                // full file paths must be created in publisher with source path
+                if ((parameters.getRelativeSummaryString() != null) && !parameters.getRelativeSummaryString().isEmpty()) {
+
+                    parameters.setSummaryFilePath(new FilePath(filePath, parameters.getRelativeSummaryString()));
+                }
+                if ((parameters.getRelativeDetailsString() != null) && !parameters.getRelativeDetailsString().isEmpty()){
+                    parameters.setDetailsFilePath(new FilePath(filePath, parameters.getRelativeDetailsString()));
+                }
+            }
+
+            parser.setParameters(parameters);
+
+            SourceMonitorReport report;
+            try{
+                report = filePath.act(parser);
+            }catch(IOException | InterruptedException ioe){
+                ioe.printStackTrace(logger);
+                run.setResult(Result.FAILURE);
+                return;
+            }
+
+            run.setResult(getBuildResult(run, Result.SUCCESS));
+
+            SourceMonitorResult result = new SourceMonitorResult(report, run);
+            SourceMonitorBuildAction buildAction = new SourceMonitorBuildAction(run, result);
+            run.addAction(buildAction);
+
+            listener.getLogger().println("End Processing sourcemonitor results");
+        }
+        return;
+    }
+
+    private Result getBuildResult(Run<?, ?> run, Result result) {
+        Result currentResult = result;
+        Result previousStepResult = run.getResult();
+        if (previousStepResult != null) {
+            if (previousStepResult != Result.NOT_BUILT && previousStepResult.isWorseOrEqualTo(result)) {
+                currentResult = previousStepResult;
+            }
+        }
+        return currentResult;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -63,46 +200,4 @@ public class SourceMonitorPublisher extends Recorder implements Serializable{
     protected boolean canContinue(final Result result) {
         return result != Result.ABORTED && result != Result.FAILURE;
     }
-
-    @Override
-    public boolean perform(AbstractBuild<?,?> build, Launcher launcher, BuildListener listener){
-    	
-        if(this.canContinue(build.getResult())){
-            
-        	listener.getLogger().println("Parsing sourcemonitor results");
-        	
-        	FilePath workspace = build.getWorkspace();
-            PrintStream logger = listener.getLogger();
-            SourceMonitorParser parser = new SourceMonitorParser(new FilePath(build.getWorkspace(), summaryFilePath));
-            
-            SourceMonitorReport report;
-            try{
-                report = workspace.act(parser);
-            
-            }catch(IOException ioe){
-                ioe.printStackTrace(logger);
-                build.setResult(Result.FAILURE);
-                return false;
-            
-            }catch(InterruptedException ie){
-                ie.printStackTrace(logger);
-                build.setResult(Result.FAILURE);
-                return false;
-            }
-
-            SourceMonitorResult result = new SourceMonitorResult(report, build);
-            SourceMonitorBuildAction buildAction = new SourceMonitorBuildAction(build, result);
-            build.addAction(buildAction);
-            
-            listener.getLogger().println("End Processing sourcemonitor results");
-        }
-        return true;
-    }
-
-	public String getSummaryFilePath() {
-		return summaryFilePath;
-	}
-
-
-    
 }

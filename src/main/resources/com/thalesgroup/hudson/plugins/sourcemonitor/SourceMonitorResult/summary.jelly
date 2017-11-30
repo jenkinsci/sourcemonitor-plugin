@@ -22,100 +22,113 @@
 * THE SOFTWARE.                                                                *
 *******************************************************************************/
 -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-  xmlns:i="jelly:fmt"  xmlns:local="local">
-  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
-  <table class="pane sortable" id="files">
-    <tr>
-      <td class="pane-header">ID</td>
-      <td class="pane-header">Metric</td>
-      <td class="pane-header">Value</td>
-    </tr>
-    
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+         xmlns:i="jelly:fmt" xmlns:local="local">
+    <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+    <style>
+        <!--Table  Style-->
+        tr:nth-child(even) {
+            background-color: aliceblue;
+        }
+        tr:nth-child(odd) {
+            background-color:white;
+        }
 
-        <j:forEach var="elt" items="${it.report.checkpoints}">    
-           <tbody>
-	        <tr>
-	         <td class="pane">M0</td>
-	         <td class="pane">Lines</td>
-	         <td class="pane">${elt["M0"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M1</td>
-	         <td class="pane">Statements</td>
-	         <td class="pane">${elt["M1"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M2</td>
-	         <td class="pane">Percent Branch Statements</td>
-	         <td class="pane">${elt["M2"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M3</td>
-	         <td class="pane">Method Call Statements</td>
-	         <td class="pane">${elt["M3"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M4</td>
-	         <td class="pane">Percent Lines with Comments</td>
-	         <td class="pane">${elt["M4"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M5</td>
-	         <td class="pane">Classes and Interfaces</td>
-	         <td class="pane">${elt["M5"]}</td>	   	          
-	        </tr>	        	        
+        th{
+            background-color: silver;
+            text-align:left;
+            padding:3px;
+        }
 
-	        <tr>
-	         <td class="pane">M6</td>
-	         <td class="pane">Methods per Class</td>
-	         <td class="pane">${elt["M6"]}</td>	   	          
-	        </tr>	
-	        <tr>
-	         <td class="pane">M7</td>
-	         <td class="pane">Average Statements per Method</td>
-	         <td class="pane">${elt["M7"]}</td>	   	          
-	        </tr>	
-	        <tr>
-	         <td class="pane">M8</td>
-	         <td class="pane">Line Number of Most Complex Method</td>
-	         <td class="pane">${elt["M8"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M9</td>
-	         <td class="pane">Name of Most Complex Method</td>
-	         <td class="pane">${elt["M9"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M10</td>
-	         <td class="pane">Maximum Complexity</td>
-	         <td class="pane">${elt["M10"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M11</td>
-	         <td class="pane">Line Number of Deepest Block</td>
-	         <td class="pane">${elt["M11"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M12</td>
-	         <td class="pane">Maximum Block Depth</td>
-	         <td class="pane">${elt["M12"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M13</td>
-	         <td class="pane">Average Block Depth</td>
-	         <td class="pane">${elt["M13"]}</td>	   	          
-	        </tr>
-	        <tr>
-	         <td class="pane">M14</td>
-	         <td class="pane">Average Complexity</td>
-	         <td class="pane">${elt["M14"]}</td>	   	          
-	        </tr>
-	      </tbody>    
-		</j:forEach>
+        caption {
+            color: royalblue;
+            text-align: left;
+            margin-bottom: 3px;
+            margin-top: 30px;
+            font-size: 125%;
+            font-weight: bold;
+        }
 
-    
- 
-  </table>
+        <!--General Style-->
+        h2{
+            color: mediumblue;
+            margin-bottom: 5px;
+        }
+        h1{
+            margin-top: 40px;
+            color: Navy;
+            margin-bottom: 0px;
+        }
+
+        a:link{
+            color:royalblue;
+        }
+        a:visited{
+            color:navy;
+        }
+    </style>
+    <!-- when/otherwise equivalent to if/else -->
+    <j:choose>
+        <!-- when the details file was parsed, display that -->
+        <j:when test="${!empty(it.report.detailsFileOutput)}">
+            <table style="width:50%" class="pane sortable" id="table1">
+                <h2>Repo Files Summary</h2>
+                <col style="width:26%"></col>
+                <col style="width:8%"></col>
+                <col style="width:8%"></col>
+                <col style="width:8%"></col>
+                <col style="width:8%"></col>
+                <tr>
+                    <th>File Name</th>
+                    <th># of Functions</th>
+                    <th># of Statements</th>
+                    <th>Max Statements</th>
+                    <th>Max Complexity</th>
+                </tr>
+                <tbody>
+                    <j:out value="${it.detailsFileOutput}"/>
+                </tbody>
+            </table>
+        </j:when> <!-- end details file display -->
+
+        <!-- otherwise the summary file was parsed, display that-->
+        <j:otherwise>
+            <table style="width:50%" class="pane sortable" id="files">
+                <caption>Repo Summary</caption>
+                <col style="width:30%"></col>
+                <col style="width:20%"></col>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+                <tbody>
+                    <j:forEach var="metric" items="${it.report.summaryMetrics}">
+                        <tr>
+                            <td width="50" class="pane">${metric.key}</td>
+                            <td width="50" class="pane">${metric.value}</td>
+                        </tr>
+                    </j:forEach>
+                </tbody>
+            </table>
+            <!-- for backwards compatibility, only display detailed metrics if exists -->
+            <j:if test="${!empty(it.report.detailedMetrics)}">
+                <table style="width:50%" class="pane sortable" id="files">
+                    <caption>Function Metrics</caption>
+                    <col style="width:25%"></col>
+                    <col style="width:15%"></col>
+                    <col style="width:10%"></col>
+                    <tr>
+                        <th>Function</th>
+                        <th>Complexity</th>
+                        <th>Statements</th>
+                    </tr>
+                    <tbody>
+                        <j:out value="${it.detailedMetrics}"/>
+                    </tbody>
+                </table>
+            </j:if>
+        </j:otherwise> <!-- end summary file display -->
+    </j:choose>
 </j:jelly>

@@ -23,24 +23,34 @@
 
 package com.thalesgroup.hudson.plugins.sourcemonitor;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Action;
+import hudson.model.*;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import jenkins.tasks.SimpleBuildStep;
+import org.jvnet.localizer.Localizable;
 import org.kohsuke.stapler.StaplerProxy;
 
 
-public class SourceMonitorBuildAction implements Action, Serializable, StaplerProxy {
-
+public class SourceMonitorBuildAction implements HealthReportingAction, Serializable, StaplerProxy, SimpleBuildStep.LastBuildAction {
+    private static final long serialVersionUID = 1L;
     public static final String URL_NAME = "sourcemonitor";
 
-    private AbstractBuild<?,?> build;
+    private Run<?, ?> build;
     private SourceMonitorResult result;
 
-    public SourceMonitorBuildAction(AbstractBuild<?,?> build, SourceMonitorResult result){
+    //region Constructor
+    public SourceMonitorBuildAction(Run<?, ?> build, SourceMonitorResult result){
         this.build = build;
         this.result = result;
     }
+    //endregion
 
+
+    //region Getters and Setters
     public String getIconFileName() {
         return "/plugin/sourcemonitor/icons/sourcemonitor-24.png";
     }
@@ -85,14 +95,14 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
     }
 
     SourceMonitorBuildAction getPreviousAction(){
-        AbstractBuild<?,?> previousBuild = this.build.getPreviousBuild();
+        Run<?, ?> previousBuild = this.build.getPreviousSuccessfulBuild();
         if(previousBuild != null){
             return previousBuild.getAction(SourceMonitorBuildAction.class);
         }
         return null;
     }
 
-    AbstractBuild<?,?> getBuild(){
+    Run<?, ?> getBuild(){
         return this.build;
     }
 
@@ -100,4 +110,81 @@ public class SourceMonitorBuildAction implements Action, Serializable, StaplerPr
         return this.result;
     }
 
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        List<SourceMonitorProjectAction> projectActions = new ArrayList<>();
+        projectActions.add(new SourceMonitorProjectAction(build.getParent()));
+        return projectActions;
+    }
+    //endregion
+
+    //region Health Report Functions
+    @Override
+    public HealthReport getBuildHealth() {
+        SourceMonitorReport report = result.getReport();
+        int maxComplexity = Integer.parseInt(report.getSummaryMetrics().get("Complexity of Most Complex Function"));
+        int maxComplexityHealth = 101;
+        double commentCoverage = Double.parseDouble(report.getSummaryMetrics().get("Percent Lines with Comments"));
+        int commentCoverageHealth = 101;
+        double averageComplexity = Double.parseDouble(report.getSummaryMetrics().get("Average Complexity"));
+        int averageComplexityHealth = 101;
+        int minimumHealth;
+        Localizable description;
+        ConfigurableParameters parameters = report.getParameters();
+
+        if (parameters.getMaxComplexityThresholdMaximum() > 0) {
+            maxComplexityHealth = calculateHealthReverse(maxComplexity, parameters.getMaxComplexityThresholdMinimum(), parameters.getMaxComplexityThresholdMaximum());
+        }
+        if (parameters.getCommentCoverageThresholdMaximum() > 0) {
+            commentCoverageHealth = calculateHealth(commentCoverage, parameters.getCommentCoverageThresholdMinimum(), parameters.getCommentCoverageThresholdMaximum());
+        }
+        if (parameters.getAverageComplexityThresholdMaximum() > 0) {
+            averageComplexityHealth = calculateHealthReverse(averageComplexity, parameters.getAverageComplexityThresholdMinimum(), parameters.getAverageComplexityThresholdMaximum());
+        }
+
+        if ((maxComplexityHealth < commentCoverageHealth) && (maxComplexityHealth < averageComplexityHealth)) {
+            minimumHealth = maxComplexityHealth;
+            description = Messages._SourceMonitorBuildAction_healthReportMaxComplexityDescription(maxComplexity);
+        } else if ((commentCoverageHealth < maxComplexityHealth) && (commentCoverageHealth < averageComplexityHealth)) {
+            minimumHealth = commentCoverageHealth;
+            description = Messages._SourceMonitorBuildAction_healthReportCommentCoverageDescription(commentCoverage);
+        } else {
+            minimumHealth = averageComplexityHealth;
+            description = Messages._SourceMonitorBuildAction_healthReportAverageComplexityDescription(averageComplexity);
+        }
+
+        HealthReport healthReport = null;
+
+        // Only generate the health report when the health is valid.
+        if (minimumHealth <= 100) {
+            healthReport = new HealthReport(minimumHealth, description);
+        }
+
+        return healthReport;
+    }
+
+    private int calculateHealthReverse(double value, double valueMin, double valueMax) {
+        double boundedValue = value;
+
+        // Limit the max complexity to the bounds of the thresholds
+        boundedValue = Math.max(boundedValue, valueMin);
+        boundedValue = Math.min(boundedValue, valueMax);
+
+        boundedValue = ((valueMax - boundedValue) * 100) / (valueMax - valueMin);
+
+        return (int)boundedValue;
+    }
+
+    private int calculateHealth(double value, double valueMin, double valueMax) {
+        double boundedValue = value;
+
+        // Limit the max complexity to the bounds of the thresholds
+        boundedValue = Math.max(boundedValue, valueMin);
+        boundedValue = Math.min(boundedValue, valueMax);
+
+        boundedValue = ((boundedValue - valueMin) * 100) / (valueMax - valueMin);
+
+        return (int)boundedValue;
+    }
+    //endregion
 }
